@@ -1,0 +1,103 @@
+{
+    "pair_sars": {
+        "Both negative": 0,
+        "No transmission": 1,
+        "Transmission": 2
+    },
+    "ind1_site": {
+        "Klerksdorp": 0,
+        "Soweto": 1
+    },
+    "ind1_agegrp9": {
+        "13-17": 0,
+        "18-34": 1,
+        "35-59": 2,
+        "5-12": 3,
+        "<5": 4,
+        ">=60": 5
+    },
+    "ind1_sex": {
+        "Female": 0,
+        "Male": 1
+    },
+    "ind1_smokecignow1": {
+        "No": 0,
+        "Unknown": 1,
+        "Yes": 2
+    },
+    "ind1_bmicat": {
+        "Normal weight": 0,
+        "Obese": 1,
+        "Overweight": 2,
+        "Underweight": 3,
+        "Unknown": 4
+    },
+    "ind1_index": {
+        "Contact": 0,
+        "Index": 1
+    },
+    "ind1_sars": {
+        "Negative": 0,
+        "Positive": 1
+    },
+    "ind1_sus": {
+        "Self Index": 0,
+        "Susceptible": 1
+    },
+    "ind1_ixesarsvarf1": {
+        "Alpha": 0,
+        "Beta": 1,
+        "Delta": 2,
+        "Self Index": 3,
+        "Variant Unknown": 4,
+        "non-Alpha/Beta/Delta": 5
+    },
+    "ind2_site": {
+        "Klerksdorp": 0,
+        "Soweto": 1
+    },
+    "ind2_agegrp9": {
+        "13-17": 0,
+        "18-34": 1,
+        "35-59": 2,
+        "5-12": 3,
+        "<5": 4,
+        ">=60": 5
+    },
+    "ind2_sex": {
+        "Female": 0,
+        "Male": 1
+    },
+    "ind2_smokecignow1": {
+        "No": 0,
+        "Unknown": 1,
+        "Yes": 2
+    },
+    "ind2_bmicat": {
+        "Normal weight": 0,
+        "Obese": 1,
+        "Overweight": 2,
+        "Underweight": 3,
+        "Unknown": 4
+    },
+    "ind2_index": {
+        "Contact": 0,
+        "Index": 1
+    },
+    "ind2_sars": {
+        "Negative": 0,
+        "Positive": 1
+    },
+    "ind2_sus": {
+        "Self Index": 0,
+        "Susceptible": 1
+    },
+    "ind2_ixesarsvarf1": {
+        "Alpha": 0,
+        "Beta": 1,
+        "Delta": 2,
+        "Self Index": 3,
+        "Variant Unknown": 4,
+        "non-Alpha/Beta/Delta": 5
+    }
+}
