@@ -5,18 +5,22 @@ Modules:
 - db_manager: Database management and ORM models
 - config: Database configuration management
 - data_loader: ETL data loading into warehouse
+- star_tree: Star Tree prefix tree for trajectory compression
 """
 
 from .db_manager import DatabaseManager, get_database_manager, Base
 from .config import DatabaseConfig
 from .data_loader import DataWarehouseLoader
+from .star_tree import StarNode, StarTree
 
 __all__ = [
     'DatabaseManager',
     'get_database_manager',
     'Base',
     'DatabaseConfig',
-    'DataWarehouseLoader'
+    'DataWarehouseLoader',
+    'StarNode',
+    'StarTree'
 ]
 
 __version__ = '1.0.0'
