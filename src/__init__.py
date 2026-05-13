@@ -13,6 +13,7 @@ from .config import DatabaseConfig
 from .data_loader import DataWarehouseLoader
 from .star_tree import StarNode, StarTree
 from .star_cubing import starcubing
+from .algorithm import export_cube_to_sql
 
 __all__ = [
     'DatabaseManager',
@@ -21,8 +22,9 @@ __all__ = [
     'DatabaseConfig',
     'DataWarehouseLoader',
     'StarNode',
-    'StarTree'
-    ,'starcubing'
+    'StarTree',
+    'starcubing',
+    'export_cube_to_sql',
 ]
 
 __version__ = '1.0.0'
