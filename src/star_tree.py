@@ -117,11 +117,286 @@ class StarNode:
         return f"{self.attribute_name}={self.attribute_value}:{self.count}"
 
 
+class StarTree:
+    """
+    Star Tree (Prefix Tree) for compressing trajectories/transactions.
+    Uses star replacement to reduce memory footprint by replacing infrequent
+    attributes with a wildcard '*' operator.
+    
+    The tree is structured as:
+    Root → Attribute1_values → Attribute2_values → ... → Leaf
+    """
+    
+    def __init__(self, attribute_names: List[str], min_support: int = 1):
+        """
+        Initialize a StarTree
+        
+        Args:
+            attribute_names: List of attribute names in order (e.g., ['site', 'age_group', 'sex'])
+            min_support: Minimum support threshold for star replacement
+        """
+        self.root = StarNode()
+        self.attribute_names = attribute_names
+        self.num_attributes = len(attribute_names)
+        self.min_support = min_support
+        self.transaction_count = 0
+        
+        # Track attribute value frequencies for star replacement
+        self.attribute_frequencies: Dict[str, Dict[str, int]] = {
+            attr: defaultdict(int) for attr in attribute_names
+        }
+    
+    def insert(self, transaction: List[str]) -> None:
+        """
+        Insert a transaction (row of attributes) into the star tree.
+        Automatically applies star replacement based on min_support threshold.
+        
+        Args:
+            transaction: List of attribute values in same order as attribute_names
+        """
+        if len(transaction) != self.num_attributes:
+            raise ValueError(
+                f"Transaction length {len(transaction)} does not match "
+                f"attribute count {self.num_attributes}"
+            )
+        
+        # Track frequencies for all attributes
+        for attr_name, attr_value in zip(self.attribute_names, transaction):
+            self.attribute_frequencies[attr_name][attr_value] += 1
+        
+        # Apply star replacement - replace with * if doesn't meet min_support
+        replaced_transaction = self._apply_star_replacement(transaction)
+        
+        # Insert into tree
+        self._insert_path(replaced_transaction)
+        self.transaction_count += 1
+    
+    def _apply_star_replacement(self, transaction: List[str]) -> List[str]:
+        """
+        Apply star replacement logic: replace attributes that don't meet
+        the global minimum support threshold with '*'
+        
+        Args:
+            transaction: Original transaction with all attributes
+            
+        Returns:
+            Transaction with infrequent attributes replaced by '*'
+        """
+        replaced = []
+        for attr_name, attr_value in zip(self.attribute_names, transaction):
+            freq = self.attribute_frequencies[attr_name][attr_value]
+            if freq >= self.min_support:
+                replaced.append(attr_value)
+            else:
+                replaced.append('*')
+        return replaced
+    
+    def _insert_path(self, transaction: List[str]) -> None:
+        """
+        Insert a transaction path into the tree structure
+        
+        Args:
+            transaction: Transaction (with star replacement already applied)
+        """
+        current_node = self.root
+        
+        for level, (attr_name, attr_value) in enumerate(
+            zip(self.attribute_names, transaction)
+        ):
+            # Get or create child node for this attribute value
+            if not current_node.has_child(attr_value):
+                child_node = StarNode(attr_name, attr_value)
+                current_node.add_child(attr_value, child_node)
+            
+            current_node = current_node.get_child(attr_value)
+            current_node.increment_count()
+    
+    def get_paths(self, min_count: int = 1) -> List[Tuple[List[Tuple[str, str]], int]]:
+        """
+        Extract all paths from the tree with their support counts
+        
+        Args:
+            min_count: Minimum count threshold for paths to include
+            
+        Returns:
+            List of (path, count) tuples where path is list of (attr_name, attr_value)
+        """
+        paths = []
+        self._extract_paths(self.root, [], paths, min_count)
+        return paths
+    
+    def _extract_paths(
+        self,
+        node: StarNode,
+        current_path: List[Tuple[str, str]],
+        paths: List[Tuple[List[Tuple[str, str]], int]],
+        min_count: int
+    ) -> None:
+        """
+        Recursively extract all paths from node
+        
+        Args:
+            node: Current node being processed
+            current_path: Path accumulated so far
+            paths: List to store results
+            min_count: Minimum count threshold
+        """
+        if node.attribute_name is not None:  # Not root
+            current_path = current_path + [(node.attribute_name, node.attribute_value)]
+        
+        # If this is a complete path and meets threshold, add it
+        if len(current_path) == self.num_attributes and node.count >= min_count:
+            paths.append((current_path[:], node.count))
+        
+        # Recursively process children
+        for child in node.children.values():
+            self._extract_paths(child, current_path, paths, min_count)
+    
+    def get_statistics(self) -> Dict[str, Any]:
+        """
+        Get statistics about the tree
+        
+        Returns:
+            Dictionary with tree statistics
+        """
+        num_nodes = self._count_nodes(self.root)
+        memory_size = self.root.get_memory_size()
+        num_paths = len(self.get_paths())
+        
+        return {
+            'transaction_count': self.transaction_count,
+            'num_nodes': num_nodes,
+            'memory_bytes': memory_size,
+            'memory_mb': memory_size / (1024 * 1024),
+            'num_paths': num_paths,
+            'num_attributes': self.num_attributes,
+            'avg_path_length': (
+                num_paths / self.transaction_count
+                if self.transaction_count > 0
+                else 0
+            ),
+            'compression_ratio': (
+                (self.transaction_count * self.num_attributes) / num_nodes
+                if num_nodes > 0
+                else 0
+            )
+        }
+    
+    def _count_nodes(self, node: StarNode) -> int:
+        """Count total nodes in subtree"""
+        count = 1
+        for child in node.children.values():
+            count += self._count_nodes(child)
+        return count
+    
+    def print_tree(self, max_depth: int = None) -> str:
+        """
+        Print tree structure for visualization
+        
+        Args:
+            max_depth: Maximum depth to print (None = all)
+            
+        Returns:
+            String representation of tree
+        """
+        lines = []
+        self._print_tree_recursive(self.root, 0, max_depth, lines)
+        return '\n'.join(lines)
+    
+    def _print_tree_recursive(
+        self,
+        node: StarNode,
+        depth: int,
+        max_depth: Optional[int],
+        lines: List[str]
+    ) -> None:
+        """Recursively print tree structure"""
+        if max_depth is not None and depth > max_depth:
+            return
+        
+        if node.attribute_name is not None:
+            indent = '  ' * depth
+            lines.append(f"{indent}├─ {node.attribute_name}={node.attribute_value} [{node.count}]")
+        
+        for child in node.children.values():
+            self._print_tree_recursive(child, depth + 1, max_depth, lines)
+    
+    def load_from_dataframe(
+        self,
+        df: pd.DataFrame,
+        attribute_columns: List[str],
+        calculate_min_support: bool = False
+    ) -> None:
+        """
+        Load transactions from a pandas DataFrame
+        
+        Args:
+            df: DataFrame containing transactions
+            attribute_columns: Column names to use as attributes
+            calculate_min_support: If True, calculate min_support as 10% of row count
+        """
+        if calculate_min_support:
+            self.min_support = max(1, len(df) // 10)
+        
+        for _, row in df.iterrows():
+            transaction = [str(row[col]) for col in attribute_columns]
+            self.insert(transaction)
+        
+        print(f"✓ Loaded {len(df)} transactions into StarTree")
+    
+    def get_frequent_patterns(self, min_support: int = None) -> List[Tuple[List[str], int]]:
+        """
+        Get frequent patterns (paths with minimum support)
+        
+        Args:
+            min_support: Minimum support count (uses tree's min_support if not provided)
+            
+        Returns:
+            List of (path, count) tuples
+        """
+        if min_support is None:
+            min_support = self.min_support
+        
+        patterns = []
+        paths = self.get_paths(min_count=min_support)
+        
+        for path, count in paths:
+            pattern = [f"{name}={value}" for name, value in path]
+            patterns.append((pattern, count))
+        
+        return patterns
+
+
 if __name__ == '__main__':
     # Example usage
+    print("=== StarNode Example ===")
     root = StarNode()
     child = StarNode('site', 'Klerksdorp')
     root.add_child('Klerksdorp', child)
     child.increment_count(5)
     print(f"✓ StarNode created: {child}")
     print(f"✓ Memory usage: {root.get_memory_size()} bytes")
+    
+    print("\n=== StarTree Example ===")
+    attributes = ['site', 'age_group', 'sex']
+    tree = StarTree(attributes, min_support=2)
+    
+    # Insert sample transactions
+    transactions = [
+        ['Klerksdorp', '18-34', 'Female'],
+        ['Klerksdorp', '35-59', 'Male'],
+        ['Klerksdorp', '18-34', 'Female'],
+        ['Johannesburg', '18-34', 'Male'],
+        ['Johannesburg', '5-12', 'Female'],
+    ]
+    
+    for txn in transactions:
+        tree.insert(txn)
+    
+    print(tree.print_tree(max_depth=2))
+    print("\n✓ Tree Statistics:")
+    for key, value in tree.get_statistics().items():
+        if isinstance(value, float):
+            print(f"  {key}: {value:.4f}")
+        else:
+            print(f"  {key}: {value}")
