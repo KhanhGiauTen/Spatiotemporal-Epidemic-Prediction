@@ -12,6 +12,7 @@ from .db_manager import DatabaseManager, get_database_manager, Base
 from .config import DatabaseConfig
 from .data_loader import DataWarehouseLoader
 from .star_tree import StarNode, StarTree
+from .star_cubing import starcubing
 
 __all__ = [
     'DatabaseManager',
@@ -21,6 +22,7 @@ __all__ = [
     'DataWarehouseLoader',
     'StarNode',
     'StarTree'
+    ,'starcubing'
 ]
 
 __version__ = '1.0.0'
