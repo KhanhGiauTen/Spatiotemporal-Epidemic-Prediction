@@ -13,7 +13,7 @@ load_dotenv()
 class DatabaseConfig:
     """Database configuration using environment variables"""
     
-    # Database type: sqlite, postgresql, mysql
+    # Database type: sqlite, postgresql, mysql, mssql
     DB_TYPE = os.getenv('DB_TYPE', 'sqlite')
     
     # SQLite settings
@@ -32,6 +32,14 @@ class DatabaseConfig:
     MYSQL_USER = os.getenv('MYSQL_USER', '')
     MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD', '')
     MYSQL_DB = os.getenv('MYSQL_DB', 'warehouse_db')
+
+    # SQL Server settings
+    MSSQL_HOST = os.getenv('MSSQL_HOST', 'localhost')
+    MSSQL_PORT = int(os.getenv('MSSQL_PORT', 1433))
+    MSSQL_USER = os.getenv('MSSQL_USER', '')
+    MSSQL_PASSWORD = os.getenv('MSSQL_PASSWORD', '')
+    MSSQL_DB = os.getenv('MSSQL_DB', 'warehouse_db')
+    MSSQL_ODBC_DRIVER = os.getenv('MSSQL_ODBC_DRIVER', 'ODBC Driver 18 for SQL Server')
     
     # Connection settings
     SQLALCHEMY_ECHO = os.getenv('SQLALCHEMY_ECHO', 'False').lower() == 'true'
@@ -58,6 +66,13 @@ class DatabaseConfig:
                 f'mysql+pymysql://{cls.MYSQL_USER}:{cls.MYSQL_PASSWORD}'
                 f'@{cls.MYSQL_HOST}:{cls.MYSQL_PORT}/{cls.MYSQL_DB}'
             )
+        elif cls.DB_TYPE in {'mssql', 'sqlserver'}:
+            driver = cls.MSSQL_ODBC_DRIVER.replace(' ', '+')
+            return (
+                f'mssql+pyodbc://{cls.MSSQL_USER}:{cls.MSSQL_PASSWORD}'
+                f'@{cls.MSSQL_HOST}:{cls.MSSQL_PORT}/{cls.MSSQL_DB}'
+                f'?driver={driver}&TrustServerCertificate=yes'
+            )
         else:
             raise ValueError(f"Unsupported database type: {cls.DB_TYPE}")
     
@@ -69,12 +84,14 @@ class DatabaseConfig:
             'host': (
                 cls.POSTGRES_HOST if cls.DB_TYPE == 'postgresql'
                 else cls.MYSQL_HOST if cls.DB_TYPE == 'mysql'
+                else cls.MSSQL_HOST if cls.DB_TYPE in {'mssql', 'sqlserver'}
                 else 'local'
             ),
             'database': (
                 cls.SQLITE_DB_NAME if cls.DB_TYPE == 'sqlite'
                 else cls.POSTGRES_DB if cls.DB_TYPE == 'postgresql'
-                else cls.MYSQL_DB
+                else cls.MYSQL_DB if cls.DB_TYPE == 'mysql'
+                else cls.MSSQL_DB
             ),
             'echo_sql': cls.SQLALCHEMY_ECHO
         }
