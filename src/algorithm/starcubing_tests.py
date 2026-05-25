@@ -135,6 +135,29 @@ class TestExportCubeToSql(unittest.TestCase):
         self.assertEqual(db_manager.insert_calls[0][0]["count_exposure"], 5)
         self.assertEqual(db_manager.insert_calls[0][1]["count_exposure"], 7)
 
+    def test_default_dimension_keys_support_aggregate_cuboids(self):
+        db_manager = FakeDBManager()
+        records = [
+            (["*", "*", "P001"], 3),
+        ]
+
+        summary = export_cube_to_sql(
+            cube_records=records,
+            columns=["ind1_site", "month_id", "patient_code"],
+            db_manager=db_manager,
+            mapping_dict={"ind1_site": {"Soweto": 1}},
+            default_time_id=20210101,
+            default_location_id=7,
+            batch_size=1000,
+        )
+
+        self.assertEqual(summary["inserted_records"], 1)
+        inserted = db_manager.insert_calls[0][0]
+        self.assertEqual(inserted["time_id"], 20210101)
+        self.assertEqual(inserted["location_id"], 7)
+        self.assertEqual(inserted["patient_id"], 101)
+        self.assertEqual(inserted["count_exposure"], 3)
+
 
 if __name__ == "__main__":
     unittest.main()

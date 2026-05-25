@@ -1,13 +1,14 @@
 # Star Cubing (Iceberg Cube Extraction)
 
-This document describes the `starcubing` algorithm implemented in `src/star_cubing.py`.
+This document describes the `starcubing` algorithm implemented in
+`src/algorithm/starcubing.py` and re-exported by `src/star_cubing.py`.
 
 ## Algorithm Summary
 
-- `starcubing(tree, min_sup)` performs a top-down traversal of the `StarTree`.
-- At every visited prefix (node), if the node's support `< min_sup` we **prune** that branch (bottom-up pruning).
-- For each node with support >= `min_sup`, we emit the corresponding cuboid (filling remaining dimensions with `*`).
-- The result is a list of heavy-hitter cuboids and their support counts.
+- `starcubing(tree, min_sup)` reads compressed rows from the `StarTree`.
+- The recursive pass walks dimensions top-down and explores both aggregate (`*`) and concrete-value branches.
+- Concrete branches whose shared support `< min_sup` are pruned immediately by the Apriori rule.
+- The result is a deterministic list of heavy-hitter cuboids and their support counts.
 
 ## Usage
 
@@ -16,7 +17,7 @@ from src import StarTree, starcubing
 
 attributes = ['site', 'age_group', 'sex']
 tree = StarTree(attributes, min_support=2)
-# insert transactions ...
+tree.build_from_transactions(transactions)
 results = starcubing(tree, min_sup=10)
 for cuboid, support in results:
     print(cuboid, support)
@@ -24,7 +25,11 @@ for cuboid, support in results:
 
 ## Pruning (Shared Dimensions)
 
-The implementation uses node-level counts (prefix support). If a prefix's support is below `min_sup`, it is pruned and its children are not explored. This effectively enforces the Apriori bottom-up pruning condition while traversing top-down.
+The implementation groups the currently shared row set by each dimension. If a
+concrete value branch has support below `min_sup`, every more-specific cuboid
+under that branch is pruned. The aggregate `*` branch remains available, so
+heavy hitters such as `(*, 18-34, *)` are still discovered even when no single
+first-dimension prefix is frequent.
 
 ## Complexity
 
@@ -32,8 +37,9 @@ The implementation uses node-level counts (prefix support). If a prefix's suppor
 - Space: Output size proportional to number of heavy-hitter cuboids
 
 ## Files
-- `src/star_cubing.py` - Implementation
-- `src/star_cubing_tests.py` - Unit tests (2 passing tests)
+- `src/algorithm/starcubing.py` - Implementation and SQL export
+- `src/star_cubing.py` - Backwards-compatible import wrapper
+- `src/star_cubing_tests.py` - Unit tests for pruning, non-prefix cuboids, and imports
 
 ## Notes
-- The function is intentionally simple and focused on correctness; it can be extended to aggregate counts across siblings or to compute candidate merges for bottom-up Apriori layers if needed.
+- The function emits value vectors in the same dimension order as `tree.attribute_names`.

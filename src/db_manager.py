@@ -8,12 +8,11 @@ from datetime import datetime, date
 from typing import Optional, List, Dict, Any
 
 from sqlalchemy import (
-    create_engine, Column, Integer, String, Float, Boolean, DateTime, 
-    Date, Numeric, ForeignKey, Index, func
+    create_engine, Column, BigInteger, Integer, String, Boolean, DateTime,
+    Date, Numeric, ForeignKey, func, inspect as sqlalchemy_inspect
 )
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship, Session
-from sqlalchemy.pool import QueuePool
+from sqlalchemy.orm import declarative_base, sessionmaker, relationship, Session
+from sqlalchemy.pool import QueuePool, StaticPool
 
 
 # Base class for all ORM models
@@ -130,7 +129,7 @@ class FactExposure(Base):
     """
     __tablename__ = 'Fact_Exposure'
     
-    exposure_id = Column(Integer, primary_key=True, autoincrement=True)
+    exposure_id = Column(BigInteger, primary_key=True, autoincrement=True)
     time_id = Column(Integer, ForeignKey('Dim_Time.time_id'), nullable=False, index=True)
     location_id = Column(Integer, ForeignKey('Dim_Location.location_id'), nullable=False, index=True)
     patient_id = Column(Integer, ForeignKey('Dim_Patient.patient_id'), nullable=False, index=True)
@@ -184,17 +183,29 @@ class DatabaseManager:
                 - PostgreSQL: postgresql://user:password@localhost:5432/warehouse_db
                 - MySQL: mysql+pymysql://user:password@localhost:3306/warehouse_db
                 - SQLite: sqlite:///./warehouse.db
+                - SQL Server: mssql+pyodbc://user:password@host:1433/db?driver=ODBC+Driver+18+for+SQL+Server
             echo: Whether to echo SQL statements (for debugging)
         """
         self.connection_string = connection_string
-        self.engine = create_engine(
-            connection_string,
-            echo=echo,
-            poolclass=QueuePool,
-            pool_size=10,
-            max_overflow=20,
-            pool_pre_ping=True  # Test connection before using
-        )
+        engine_kwargs = {"echo": echo}
+        if connection_string == "sqlite:///:memory:":
+            engine_kwargs.update(
+                {
+                    "poolclass": StaticPool,
+                    "connect_args": {"check_same_thread": False},
+                }
+            )
+        elif not connection_string.startswith("sqlite"):
+            engine_kwargs.update(
+                {
+                    "poolclass": QueuePool,
+                    "pool_size": 10,
+                    "max_overflow": 20,
+                    "pool_pre_ping": True,
+                }
+            )
+
+        self.engine = create_engine(connection_string, **engine_kwargs)
         self.SessionLocal = sessionmaker(bind=self.engine, expire_on_commit=False)
     
     def create_all_tables(self):
@@ -230,7 +241,6 @@ class DatabaseManager:
         Returns:
             Number of records inserted
         """
-        dim_time_objects = [DimTime(**record) for record in time_records]
         session.bulk_insert_mappings(DimTime, time_records)
         session.commit()
         return len(time_records)
@@ -408,7 +418,9 @@ class DatabaseManager:
     
     def get_row_count(self, session: Session, model_class) -> int:
         """Get row count for a specific table"""
-        return session.query(func.count(model_class.id)).scalar()
+        mapper = sqlalchemy_inspect(model_class)
+        primary_key = mapper.primary_key[0]
+        return int(session.query(func.count(primary_key)).scalar() or 0)
     
     def delete_all_exposure_facts(self, session: Session) -> int:
         """Delete all exposure facts (for reloading data)"""
@@ -434,7 +446,7 @@ def get_database_manager(
     Factory function to create DatabaseManager with appropriate connection string
     
     Args:
-        db_type: Database type ('sqlite', 'postgresql', 'mysql')
+        db_type: Database type ('sqlite', 'postgresql', 'mysql', 'mssql')
         host: Database host
         port: Database port
         database: Database name
@@ -447,13 +459,28 @@ def get_database_manager(
     """
     
     if db_type == 'sqlite':
-        connection_string = f'sqlite:///{database}.db'
+        if database == ':memory:':
+            connection_string = 'sqlite:///:memory:'
+        elif database.startswith('sqlite:'):
+            connection_string = database
+        elif database.endswith('.db'):
+            connection_string = f'sqlite:///{database}'
+        else:
+            connection_string = f'sqlite:///{database}.db'
     elif db_type == 'postgresql':
         port = port or 5432
         connection_string = f'postgresql://{user}:{password}@{host}:{port}/{database}'
     elif db_type == 'mysql':
         port = port or 3306
         connection_string = f'mysql+pymysql://{user}:{password}@{host}:{port}/{database}'
+    elif db_type in {'mssql', 'sqlserver'}:
+        port = port or 1433
+        driver = os.getenv('MSSQL_ODBC_DRIVER', 'ODBC Driver 18 for SQL Server')
+        driver_param = driver.replace(' ', '+')
+        connection_string = (
+            f'mssql+pyodbc://{user}:{password}@{host}:{port}/{database}'
+            f'?driver={driver_param}&TrustServerCertificate=yes'
+        )
     else:
         raise ValueError(f"Unsupported database type: {db_type}")
     

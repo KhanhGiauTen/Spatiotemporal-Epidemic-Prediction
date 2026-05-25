@@ -19,8 +19,7 @@ class TestStarCubing(unittest.TestCase):
             ['B', '18-34', 'F'],
             ['C', '5-12', 'M'],
         ]
-        for t in txns:
-            self.tree.insert(t)
+        self.tree.build_from_transactions(txns)
 
     def test_cuboids_min_sup_2(self):
         cuboids = starcubing(self.tree, min_sup=2)
@@ -32,6 +31,22 @@ class TestStarCubing(unittest.TestCase):
         # value C occurs once -> should be pruned at min_sup=2
         cuboids = starcubing(self.tree, min_sup=2)
         self.assertFalse(any(c[0][0] == 'C' for c, s in cuboids))
+
+    def test_finds_non_prefix_heavy_hitter(self):
+        tree = StarTree(self.attributes, min_support=1)
+        tree.build_from_transactions([
+            ['A', '18-34', 'F'],
+            ['B', '18-34', 'M'],
+        ])
+
+        cuboids = starcubing(tree, min_sup=2)
+        self.assertIn((['*', '18-34', '*'], 2), cuboids)
+
+    def test_algorithm_package_export(self):
+        from algorithm import starcubing as package_starcubing
+
+        cuboids = package_starcubing(self.tree, min_sup=2)
+        self.assertEqual(cuboids, starcubing(self.tree, min_sup=2))
 
 
 if __name__ == '__main__':

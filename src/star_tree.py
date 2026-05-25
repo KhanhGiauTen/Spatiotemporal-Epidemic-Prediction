@@ -3,7 +3,7 @@ Star Tree / Prefix Tree Implementation for Trajectory Compression
 Optimizes memory usage through __slots__ and star replacement algorithm
 """
 
-from typing import Dict, Optional, List, Tuple, Any
+from typing import Dict, Iterable, Optional, List, Sequence, Tuple, Any
 from collections import defaultdict
 import pandas as pd
 
@@ -127,24 +127,86 @@ class StarTree:
     Root → Attribute1_values → Attribute2_values → ... → Leaf
     """
     
-    def __init__(self, attribute_names: List[str], min_support: int = 1):
+    def __init__(
+        self,
+        attribute_names: List[str],
+        min_support: int = 1,
+        star_token: str = '*'
+    ):
         """
         Initialize a StarTree
         
         Args:
             attribute_names: List of attribute names in order (e.g., ['site', 'age_group', 'sex'])
             min_support: Minimum support threshold for star replacement
+            star_token: Wildcard token used for infrequent values
         """
+        if min_support < 1:
+            raise ValueError("min_support must be >= 1")
+
         self.root = StarNode()
         self.attribute_names = attribute_names
         self.num_attributes = len(attribute_names)
         self.min_support = min_support
+        self.star_token = star_token
         self.transaction_count = 0
+        self._global_support_ready = min_support == 1
         
         # Track attribute value frequencies for star replacement
         self.attribute_frequencies: Dict[str, Dict[str, int]] = {
             attr: defaultdict(int) for attr in attribute_names
         }
+
+    def _validate_transaction(self, transaction: Sequence[str]) -> None:
+        """Validate that a transaction matches the configured schema."""
+        if len(transaction) != self.num_attributes:
+            raise ValueError(
+                f"Transaction length {len(transaction)} does not match "
+                f"attribute count {self.num_attributes}"
+            )
+
+    def reset_tree(self) -> None:
+        """Clear the in-memory tree while keeping global frequency counts."""
+        self.root = StarNode()
+        self.transaction_count = 0
+
+    def fit_global_frequencies(self, transactions: Iterable[Sequence[str]]) -> List[List[str]]:
+        """
+        Calculate global attribute-value frequencies before tree insertion.
+
+        Star replacement depends on global support, so callers should fit once
+        over the full dataset and then insert rows, or call build_from_transactions.
+
+        Args:
+            transactions: Full transaction collection
+
+        Returns:
+            Materialized transaction list, useful when the input was a generator
+        """
+        materialized = [list(transaction) for transaction in transactions]
+
+        self.attribute_frequencies = {
+            attr: defaultdict(int) for attr in self.attribute_names
+        }
+        for transaction in materialized:
+            self._validate_transaction(transaction)
+            for attr_name, attr_value in zip(self.attribute_names, transaction):
+                self.attribute_frequencies[attr_name][str(attr_value)] += 1
+
+        self._global_support_ready = True
+        return materialized
+
+    def build_from_transactions(self, transactions: Iterable[Sequence[str]]) -> None:
+        """
+        Build the StarTree with exact global star replacement.
+
+        This is the preferred bulk-loading API for Iceberg Cube extraction.
+        It runs a frequency pass first, resets the tree, then inserts each row.
+        """
+        materialized = self.fit_global_frequencies(transactions)
+        self.reset_tree()
+        for transaction in materialized:
+            self.insert(transaction)
     
     def insert(self, transaction: List[str]) -> None:
         """
@@ -154,18 +216,16 @@ class StarTree:
         Args:
             transaction: List of attribute values in same order as attribute_names
         """
-        if len(transaction) != self.num_attributes:
-            raise ValueError(
-                f"Transaction length {len(transaction)} does not match "
-                f"attribute count {self.num_attributes}"
+        self._validate_transaction(transaction)
+        if not self._global_support_ready:
+            raise RuntimeError(
+                "Global frequencies are required for star replacement. "
+                "Call fit_global_frequencies() before insert(), or use "
+                "build_from_transactions() / load_from_dataframe()."
             )
         
-        # Track frequencies for all attributes
-        for attr_name, attr_value in zip(self.attribute_names, transaction):
-            self.attribute_frequencies[attr_name][attr_value] += 1
-        
         # Apply star replacement - replace with * if doesn't meet min_support
-        replaced_transaction = self._apply_star_replacement(transaction)
+        replaced_transaction = self._apply_star_replacement([str(v) for v in transaction])
         
         # Insert into tree
         self._insert_path(replaced_transaction)
@@ -184,11 +244,15 @@ class StarTree:
         """
         replaced = []
         for attr_name, attr_value in zip(self.attribute_names, transaction):
+            if self.min_support == 1:
+                replaced.append(attr_value)
+                continue
+
             freq = self.attribute_frequencies[attr_name][attr_value]
             if freq >= self.min_support:
                 replaced.append(attr_value)
             else:
-                replaced.append('*')
+                replaced.append(self.star_token)
         return replaced
     
     def _insert_path(self, transaction: List[str]) -> None:
@@ -338,9 +402,11 @@ class StarTree:
         if calculate_min_support:
             self.min_support = max(1, len(df) // 10)
         
-        for _, row in df.iterrows():
-            transaction = [str(row[col]) for col in attribute_columns]
-            self.insert(transaction)
+        transactions = [
+            [str(row[col]) for col in attribute_columns]
+            for _, row in df.iterrows()
+        ]
+        self.build_from_transactions(transactions)
         
         print(f"✓ Loaded {len(df)} transactions into StarTree")
     
@@ -390,8 +456,7 @@ if __name__ == '__main__':
         ['Johannesburg', '5-12', 'Female'],
     ]
     
-    for txn in transactions:
-        tree.insert(txn)
+    tree.build_from_transactions(transactions)
     
     print(tree.print_tree(max_depth=2))
     print("\n✓ Tree Statistics:")
