@@ -37,12 +37,14 @@ class StarTree:
 
 **Features:**
 - Manages the complete prefix tree structure
-- Automatic star replacement on insertion
+- Exact global star replacement after a frequency pass
 - Tracks global attribute frequencies
 - Provides statistics and pattern extraction
 
 **Core Methods:**
-- `insert(transaction)` - Add transaction with automatic star replacement
+- `fit_global_frequencies(transactions)` - Compute global support counts
+- `build_from_transactions(transactions)` - Two-pass bulk load with star replacement
+- `insert(transaction)` - Add one transaction after global frequencies are fitted
 - `get_paths(min_count)` - Extract all tree paths
 - `get_statistics()` - Compute compression metrics
 - `load_from_dataframe()` - Batch load from Pandas DataFrame
@@ -71,11 +73,11 @@ Given `min_support = 3`:
 
 | Transaction | Site | Age Group | Sex | Action | Stored as |
 |--|--|--|--|--|--|
-| 1 | Klerksdorp | 18-34 | Female | Insert | [Klerksdorp, 18-34, Female] |
-| 2 | Klerksdorp | 18-34 | Female | Insert | [Klerksdorp, 18-34, Female] |
-| 3 | Klerksdorp | 18-34 | Female | Insert | [Klerksdorp, 18-34, Female] |
-| 4 | Johannesburg | 5-12 | Male | Insert | [*, *, Male] (counts < 3) |
-| 5 | Cape Town | 35-59 | Female | Insert | [*, *, Female] |
+| 1 | Klerksdorp | 18-34 | Female | After global fit | [Klerksdorp, 18-34, Female] |
+| 2 | Klerksdorp | 18-34 | Female | After global fit | [Klerksdorp, 18-34, Female] |
+| 3 | Klerksdorp | 18-34 | Female | After global fit | [Klerksdorp, 18-34, Female] |
+| 4 | Johannesburg | 5-12 | Male | After global fit | [*, *, *] |
+| 5 | Cape Town | 35-59 | Female | After global fit | [*, *, Female] |
 
 **Result:** Rare patterns compressed using `*`, reducing tree nodes and memory
 
@@ -109,15 +111,13 @@ from src.star_tree import StarTree
 attributes = ['site', 'age_group', 'sex']
 tree = StarTree(attributes, min_support=2)
 
-# Insert transactions
+# Build tree with a global support pass
 transactions = [
     ['Klerksdorp', '18-34', 'Female'],
     ['Klerksdorp', '18-34', 'Female'],
     ['Johannesburg', '35-59', 'Male'],
 ]
-
-for txn in transactions:
-    tree.insert(txn)
+tree.build_from_transactions(transactions)
 
 # Get statistics
 stats = tree.get_statistics()

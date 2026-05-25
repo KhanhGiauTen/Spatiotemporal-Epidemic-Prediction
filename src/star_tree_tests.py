@@ -87,12 +87,13 @@ class TestStarTree(unittest.TestCase):
         """Test star replacement logic"""
         tree = StarTree(self.attributes, min_support=2)
         
-        # Insert same transaction 3 times (should NOT be replaced)
-        for _ in range(3):
-            tree.insert(['Klerksdorp', '18-34', 'Female'])
-        
-        # Insert different transaction once (should be replaced with *)
-        tree.insert(['Johannesburg', '5-12', 'Male'])
+        transactions = [
+            ['Klerksdorp', '18-34', 'Female'],
+            ['Klerksdorp', '18-34', 'Female'],
+            ['Klerksdorp', '18-34', 'Female'],
+            ['Johannesburg', '5-12', 'Male'],
+        ]
+        tree.build_from_transactions(transactions)
         
         # Check that frequencies are correct
         self.assertEqual(
@@ -101,6 +102,33 @@ class TestStarTree(unittest.TestCase):
         self.assertEqual(
             tree.attribute_frequencies['site']['Johannesburg'], 1
         )
+        frequent_paths = tree.get_paths(min_count=2)
+        self.assertTrue(
+            any(path[0] == ('site', 'Klerksdorp') and count == 3 for path, count in frequent_paths)
+        )
+        self.assertFalse(
+            any(path[0] == ('site', 'Johannesburg') for path, _ in tree.get_paths())
+        )
+
+    def test_insert_requires_global_support_for_star_replacement(self):
+        """Test that min_support > 1 requires a global frequency pass."""
+        tree = StarTree(self.attributes, min_support=2)
+        with self.assertRaises(RuntimeError):
+            tree.insert(['Klerksdorp', '18-34', 'Female'])
+
+    def test_build_from_transactions_uses_global_support(self):
+        """Two frequent rows should not be split between '*' and concrete values."""
+        tree = StarTree(self.attributes, min_support=2)
+        tree.build_from_transactions([
+            ['Klerksdorp', '18-34', 'Female'],
+            ['Klerksdorp', '18-34', 'Female'],
+        ])
+
+        paths = tree.get_paths()
+        self.assertEqual(len(paths), 1)
+        path, count = paths[0]
+        self.assertEqual(count, 2)
+        self.assertEqual([value for _, value in path], ['Klerksdorp', '18-34', 'Female'])
     
     def test_transaction_validation(self):
         """Test transaction length validation"""
@@ -181,8 +209,7 @@ class StarTreeDemonstration:
         ]
         
         print(f"\nInserting {len(transactions)} transactions...")
-        for i, txn in enumerate(transactions, 1):
-            tree.insert(txn)
+        tree.build_from_transactions(transactions)
         
         print("\n📊 Tree Structure:")
         print(tree.print_tree(max_depth=2))
@@ -229,8 +256,7 @@ class StarTreeDemonstration:
         for min_sup in min_supports:
             tree = StarTree(attributes, min_support=min_sup)
             
-            for txn in transactions:
-                tree.insert(txn)
+            tree.build_from_transactions(transactions)
             
             stats = tree.get_statistics()
             print(f"\n  Min Support = {min_sup}:")

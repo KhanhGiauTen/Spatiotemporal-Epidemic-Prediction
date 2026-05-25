@@ -19,8 +19,7 @@ class TestStarCubing(unittest.TestCase):
             ['B', '18-34', 'F'],
             ['C', '5-12', 'M'],
         ]
-        for t in txns:
-            self.tree.insert(t)
+        self.tree.build_from_transactions(txns)
 
     def test_cuboids_min_sup_2(self):
         cuboids = starcubing(self.tree, min_sup=2)
