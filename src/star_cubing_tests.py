@@ -32,6 +32,22 @@ class TestStarCubing(unittest.TestCase):
         cuboids = starcubing(self.tree, min_sup=2)
         self.assertFalse(any(c[0][0] == 'C' for c, s in cuboids))
 
+    def test_finds_non_prefix_heavy_hitter(self):
+        tree = StarTree(self.attributes, min_support=1)
+        tree.build_from_transactions([
+            ['A', '18-34', 'F'],
+            ['B', '18-34', 'M'],
+        ])
+
+        cuboids = starcubing(tree, min_sup=2)
+        self.assertIn((['*', '18-34', '*'], 2), cuboids)
+
+    def test_algorithm_package_export(self):
+        from algorithm import starcubing as package_starcubing
+
+        cuboids = package_starcubing(self.tree, min_sup=2)
+        self.assertEqual(cuboids, starcubing(self.tree, min_sup=2))
+
 
 if __name__ == '__main__':
     unittest.main()

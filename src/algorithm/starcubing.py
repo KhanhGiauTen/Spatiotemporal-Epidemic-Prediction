@@ -3,14 +3,17 @@
 from __future__ import annotations
 
 import json
+from collections import defaultdict
 from datetime import date, datetime
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple, Union
+from typing import Any, DefaultDict, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple, Union
 
 try:
     from ..db_manager import DatabaseManager, DimLocation, DimPatient, DimTime
+    from ..star_tree import StarNode, StarTree
 except Exception:  # pragma: no cover - fallback for direct script execution
     from db_manager import DatabaseManager, DimLocation, DimPatient, DimTime
+    from star_tree import StarNode, StarTree
 
 
 CubeRecord = Union[
@@ -18,6 +21,109 @@ CubeRecord = Union[
     Tuple[Sequence[Any], int],
     Sequence[Any],
 ]
+LeafRecord = Tuple[Tuple[str, ...], int]
+
+
+def _extract_leaf_records(tree: StarTree, cnode: Optional[StarNode] = None) -> List[LeafRecord]:
+    """Read compressed full-depth rows and support counts from a StarTree."""
+    root = cnode or tree.root
+    records: List[LeafRecord] = []
+
+    def walk(node: StarNode, path: List[str]) -> None:
+        current_path = path
+        if node.attribute_name is not None:
+            current_path = path + [str(node.attribute_value)]
+
+        if len(current_path) == tree.num_attributes:
+            records.append((tuple(current_path), int(node.count)))
+            return
+
+        for child in node.children.values():
+            walk(child, current_path)
+
+    walk(root, [])
+    return records
+
+
+def starcubing(
+    tree: StarTree,
+    min_sup: int,
+    cnode: Optional[StarNode] = None,
+    include_apex: bool = False,
+) -> List[Tuple[List[str], int]]:
+    """
+    Extract Iceberg Cuboids with top-down traversal and Apriori pruning.
+
+    The recursion considers two choices for each dimension:
+    - aggregate the dimension with the star token
+    - specialize into each concrete value whose shared-dimension support meets min_sup
+
+    This keeps the useful top-down pruning rule while still finding cuboids such
+    as (*, age_group=18-34, *) that are not tied to a single first-dimension prefix.
+    """
+    if min_sup < 1:
+        raise ValueError("min_sup must be >= 1")
+
+    star_token = getattr(tree, "star_token", "*")
+    leaf_records = _extract_leaf_records(tree, cnode=cnode)
+    if not leaf_records:
+        return []
+
+    cuboids: Dict[Tuple[str, ...], int] = {}
+
+    def branch_support(records: Sequence[LeafRecord]) -> int:
+        return sum(count for _, count in records)
+
+    def recurse(
+        dimension_index: int,
+        current_cuboid: List[str],
+        shared_records: Sequence[LeafRecord],
+    ) -> None:
+        support = branch_support(shared_records)
+        if support < min_sup:
+            return
+
+        if dimension_index == tree.num_attributes:
+            cuboid_key = tuple(current_cuboid)
+            if include_apex or any(value != star_token for value in cuboid_key):
+                cuboids[cuboid_key] = support
+            return
+
+        # Aggregate branch: keep all rows and roll this dimension up to '*'.
+        recurse(
+            dimension_index + 1,
+            current_cuboid + [star_token],
+            shared_records,
+        )
+
+        # Specialized branches: Apriori pruning by shared-dimension support.
+        grouped: DefaultDict[str, List[LeafRecord]] = defaultdict(list)
+        for values, count in shared_records:
+            value = values[dimension_index]
+            if value == star_token:
+                continue
+            grouped[value].append((values, count))
+
+        for value in sorted(grouped):
+            value_records = grouped[value]
+            if branch_support(value_records) >= min_sup:
+                recurse(
+                    dimension_index + 1,
+                    current_cuboid + [value],
+                    value_records,
+                )
+
+    recurse(0, [], leaf_records)
+    return [
+        (list(cuboid), support)
+        for cuboid, support in sorted(
+            cuboids.items(),
+            key=lambda item: (
+                -sum(value != star_token for value in item[0]),
+                item[0],
+            ),
+        )
+    ]
 
 
 def _load_mapping_dict(
