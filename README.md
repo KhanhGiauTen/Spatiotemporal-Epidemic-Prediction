@@ -112,6 +112,23 @@ Pipeline phân cụm ground zero hiện chạy bằng script Python 3.11:
 ```bash
 py -3.11 scripts/run_clustering_py311.py
 ```
+## Cách chạy nhanh — Issue 10 & Issue 11
+
+Chạy từ thư mục gốc của project. Kích hoạt virtualenv trước.
+
+Issue 10 — Outbreak classification (ghi log):
+```powershell
+& .\.venv\Scripts\Activate.ps1
+python .\src\outbreak_classification.py --project-root . --data-path .\data\processed\sashts_final_dataset.csv --mapping-path .\data\processed\mapping_dict.json --output-dir .\reports\issue_10_outbreak_classification --model random_forest --test-size 0.2 --random-state 42 2>&1 | Tee-Object run_outbreak_classification.log
+```
+
+Issue 11 — Contact network analysis (ghi log):
+```powershell
+& .\.venv\Scripts\Activate.ps1
+python .\src\contact_network_analysis.py --processed-data .\data\processed\sashts_final_dataset.csv --mapping-path .\data\processed\mapping_dict.json --output-dir .\reports\issue_11_contact_network --top-percent 0.05 2>&1 | Tee-Object run_contact_network.log
+```
+
+Outputs sẽ nằm trong thư mục `reports/issue_10_outbreak_classification/` hoặc `reports/issue_11_contact_network/` tương ứng.
 
 Script sẽ tự dùng `data/processed/sashts_final_dataset.csv` nếu không có database URL.
 
