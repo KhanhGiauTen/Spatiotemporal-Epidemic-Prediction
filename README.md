@@ -73,7 +73,7 @@ data/
   raw/                  Dữ liệu thô
   processed/            Dữ liệu sau ETL và mapping dictionary
 docs/                   Tài liệu thuật toán
-notebook/               Notebook EDA/ETL
+scripts/                Script chạy clustering và tác vụ tự động
 reports/                Kết quả và hình ảnh báo cáo
 sql/                    Schema Data Warehouse
 src/                    Source code chính
@@ -104,6 +104,16 @@ Hoặc chạy unittest trực tiếp:
 ```bash
 python -m unittest src.star_tree_tests src.star_cubing_tests src.algorithm.starcubing_tests -v
 ```
+
+## Chạy Clustering
+
+Pipeline phân cụm ground zero hiện chạy bằng script Python 3.11:
+
+```bash
+py -3.11 scripts/run_clustering_py311.py
+```
+
+Script sẽ tự dùng `data/processed/sashts_final_dataset.csv` nếu không có database URL.
 
 ## Trạng Thái Hoàn Thiện
 
