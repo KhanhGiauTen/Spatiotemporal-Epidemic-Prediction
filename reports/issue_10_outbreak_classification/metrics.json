@@ -1,0 +1,45 @@
+{
+  "accuracy": 0.7630529835390947,
+  "precision_macro": 0.8108583403892223,
+  "recall_macro": 0.6708726561773326,
+  "f1_macro": 0.6811812428017465,
+  "precision_binary": 0.7433561695400136,
+  "recall_binary": 0.972807881773399,
+  "f1_binary": 0.8427431400162164,
+  "train_rows": 124990,
+  "test_rows": 15552,
+  "train_months": [
+    197001,
+    202011,
+    202012,
+    202101,
+    202102,
+    202103,
+    202104,
+    202105,
+    202106
+  ],
+  "test_months": [
+    202107,
+    202108
+  ],
+  "feature_columns": [
+    "ind1_site",
+    "ind1_sex",
+    "ind1_index",
+    "ind1_smokecignow1",
+    "ind1_bmicat",
+    "ind1_agegrp9",
+    "ind2_site",
+    "ind2_sex",
+    "ind2_index",
+    "ind2_smokecignow1",
+    "ind2_bmicat",
+    "ind2_agegrp9",
+    "month_id",
+    "duration_sec",
+    "no_ts",
+    "contacts"
+  ],
+  "duplicate_feature_hashes_across_split": 0
+}
