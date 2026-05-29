@@ -1,0 +1,8 @@
+              precision    recall  f1-score   support
+
+        Safe       0.88      0.37      0.52      5402
+    Outbreak       0.74      0.97      0.84     10150
+
+    accuracy                           0.76     15552
+   macro avg       0.81      0.67      0.68     15552
+weighted avg       0.79      0.76      0.73     15552
