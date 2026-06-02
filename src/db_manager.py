@@ -9,7 +9,7 @@ from typing import Optional, List, Dict, Any
 
 from sqlalchemy import (
     create_engine, Column, BigInteger, Integer, String, Boolean, DateTime,
-    Date, Numeric, ForeignKey, func, inspect as sqlalchemy_inspect
+    Date, Numeric, ForeignKey, Text, func, inspect as sqlalchemy_inspect, text
 )
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship, Session
 from sqlalchemy.pool import QueuePool, StaticPool
@@ -163,6 +163,31 @@ class FactExposure(Base):
                 f"count_exposure={self.count_exposure})>")
 
 
+class FactIcebergCuboid(Base):
+    """
+    Fact-like mart table for Iceberg Cube heavy-hitters.
+    Keeps aggregated cuboids separate from event-level exposure facts.
+    """
+    __tablename__ = 'Fact_Iceberg_Cuboid'
+
+    cuboid_id = Column(BigInteger, primary_key=True, autoincrement=True)
+    run_id = Column(String(64), nullable=False, index=True)
+    dimension_values_json = Column(Text, nullable=False)
+    support_count = Column(Integer, nullable=False)
+    min_sup = Column(Integer, nullable=False)
+    month_id = Column(Integer, nullable=True, index=True)
+    ind1_site = Column(String(100), nullable=True, index=True)
+    ind2_site = Column(String(100), nullable=True, index=True)
+    pair_sars = Column(String(100), nullable=True, index=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return (
+            f"<FactIcebergCuboid(cuboid_id={self.cuboid_id}, "
+            f"run_id={self.run_id}, support_count={self.support_count})>"
+        )
+
+
 # ============================================================================
 # DATABASE CONNECTION & SESSION MANAGEMENT
 # ============================================================================
@@ -170,7 +195,7 @@ class FactExposure(Base):
 class DatabaseManager:
     """
     Manages database connections and operations for the Data Warehouse
-    Supports multiple database backends (PostgreSQL, MySQL, SQLite)
+    Supports multiple database backends (DuckDB, PostgreSQL, MySQL, SQLite)
     """
     
     def __init__(self, connection_string: str, echo: bool = False):
@@ -183,6 +208,7 @@ class DatabaseManager:
                 - PostgreSQL: postgresql://user:password@localhost:5432/warehouse_db
                 - MySQL: mysql+pymysql://user:password@localhost:3306/warehouse_db
                 - SQLite: sqlite:///./warehouse.db
+                - DuckDB: duckdb:///warehouse/epidemic.duckdb
                 - SQL Server: mssql+pyodbc://user:password@host:1433/db?driver=ODBC+Driver+18+for+SQL+Server
             echo: Whether to echo SQL statements (for debugging)
         """
@@ -195,6 +221,8 @@ class DatabaseManager:
                     "connect_args": {"check_same_thread": False},
                 }
             )
+        elif connection_string.startswith("duckdb"):
+            pass
         elif not connection_string.startswith("sqlite"):
             engine_kwargs.update(
                 {
@@ -210,11 +238,138 @@ class DatabaseManager:
     
     def create_all_tables(self):
         """Create all tables based on ORM model definitions"""
+        if self.connection_string.startswith("duckdb"):
+            self._create_duckdb_tables()
+            print("✓ All DuckDB warehouse tables created successfully")
+            return
+
         Base.metadata.create_all(self.engine)
         print("✓ All tables created successfully")
+
+    def _create_duckdb_tables(self):
+        """Create DuckDB tables with explicit integer keys to avoid BIGSERIAL."""
+        statements = [
+            """
+            CREATE TABLE IF NOT EXISTS "Dim_Time" (
+                time_id INTEGER PRIMARY KEY,
+                date_full DATE NOT NULL UNIQUE,
+                year INTEGER NOT NULL,
+                month INTEGER NOT NULL,
+                day INTEGER NOT NULL,
+                week_of_year INTEGER NOT NULL,
+                quarter INTEGER NOT NULL,
+                day_of_week VARCHAR NOT NULL,
+                is_weekend BOOLEAN NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS "Dim_Location" (
+                location_id INTEGER PRIMARY KEY,
+                site_code VARCHAR NOT NULL UNIQUE,
+                site_name VARCHAR NOT NULL,
+                region VARCHAR,
+                country VARCHAR DEFAULT 'South Africa',
+                latitude DECIMAL(10, 8),
+                longitude DECIMAL(11, 8),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS "Dim_Patient" (
+                patient_id INTEGER PRIMARY KEY,
+                patient_code VARCHAR NOT NULL UNIQUE,
+                age_group VARCHAR NOT NULL,
+                sex VARCHAR NOT NULL,
+                bmi_category VARCHAR,
+                smoking_status VARCHAR,
+                household_id VARCHAR,
+                role_in_network VARCHAR DEFAULT 'Contact',
+                sars_status VARCHAR DEFAULT 'Unknown',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS "Fact_Exposure" (
+                exposure_id BIGINT PRIMARY KEY,
+                time_id INTEGER NOT NULL,
+                location_id INTEGER NOT NULL,
+                patient_id INTEGER NOT NULL,
+                contact_patient_id INTEGER,
+                count_exposure INTEGER NOT NULL DEFAULT 1,
+                exposure_strength DECIMAL(10, 4),
+                sars_status_patient VARCHAR,
+                susceptibility_status VARCHAR,
+                variant_type VARCHAR,
+                contact_duration_category VARCHAR,
+                is_threshold_exceeded BOOLEAN DEFAULT TRUE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS "Fact_Iceberg_Cuboid" (
+                cuboid_id BIGINT PRIMARY KEY,
+                run_id VARCHAR NOT NULL,
+                dimension_values_json VARCHAR NOT NULL,
+                support_count INTEGER NOT NULL,
+                min_sup INTEGER NOT NULL,
+                month_id INTEGER,
+                ind1_site VARCHAR,
+                ind2_site VARCHAR,
+                pair_sars VARCHAR,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            """,
+            """
+            CREATE OR REPLACE VIEW v_exposure_by_location_time AS
+            SELECT
+                dt.year,
+                dt.month,
+                dt.date_full,
+                dl.site_name,
+                dl.region,
+                COUNT(fe.exposure_id) AS total_exposures,
+                SUM(fe.count_exposure) AS total_exposure_count,
+                COUNT(DISTINCT fe.patient_id) AS unique_patients,
+                COUNT(DISTINCT fe.contact_patient_id) AS unique_contacts,
+                AVG(fe.exposure_strength) AS avg_exposure_strength
+            FROM "Fact_Exposure" fe
+            JOIN "Dim_Time" dt ON fe.time_id = dt.time_id
+            JOIN "Dim_Location" dl ON fe.location_id = dl.location_id
+            WHERE fe.is_threshold_exceeded = TRUE
+            GROUP BY dt.year, dt.month, dt.date_full, dl.site_name, dl.region
+            """,
+        ]
+        with self.engine.begin() as conn:
+            for statement in statements:
+                conn.execute(text(statement))
     
     def drop_all_tables(self):
         """Drop all tables (USE WITH CAUTION)"""
+        if self.connection_string.startswith("duckdb"):
+            with self.engine.begin() as conn:
+                for view_name in (
+                    'v_powerbi_exposure_summary',
+                    'v_powerbi_overview_kpis',
+                    'v_exposure_by_location_time',
+                ):
+                    conn.execute(text(f'DROP VIEW IF EXISTS {view_name}'))
+                for table_name in (
+                    'Fact_Iceberg_Cuboid',
+                    'Fact_Exposure',
+                    'Dim_Patient',
+                    'Dim_Location',
+                    'Dim_Time',
+                    'stg_contact_network',
+                    'stg_metadata',
+                    'stg_processed_olap',
+                ):
+                    conn.execute(text(f'DROP TABLE IF EXISTS "{table_name}"'))
+            print("✓ All DuckDB warehouse tables dropped successfully")
+            return
+
         Base.metadata.drop_all(self.engine)
         print("✓ All tables dropped successfully")
     
@@ -293,6 +448,12 @@ class DatabaseManager:
         session.bulk_insert_mappings(FactExposure, exposure_records)
         session.commit()
         return len(exposure_records)
+
+    def insert_iceberg_cuboid_fact(self, session: Session, cuboid_records: List[Dict[str, Any]]) -> int:
+        """Insert Iceberg Cube heavy-hitter records."""
+        session.bulk_insert_mappings(FactIcebergCuboid, cuboid_records)
+        session.commit()
+        return len(cuboid_records)
     
     def insert_exposure_fact_single(self, session: Session, **kwargs) -> FactExposure:
         """
@@ -446,7 +607,7 @@ def get_database_manager(
     Factory function to create DatabaseManager with appropriate connection string
     
     Args:
-        db_type: Database type ('sqlite', 'postgresql', 'mysql', 'mssql')
+        db_type: Database type ('duckdb', 'sqlite', 'postgresql', 'mysql', 'mssql')
         host: Database host
         port: Database port
         database: Database name
@@ -458,7 +619,12 @@ def get_database_manager(
         DatabaseManager instance
     """
     
-    if db_type == 'sqlite':
+    if db_type == 'duckdb':
+        if database.startswith('duckdb:'):
+            connection_string = database
+        else:
+            connection_string = f'duckdb:///{database}'
+    elif db_type == 'sqlite':
         if database == ':memory:':
             connection_string = 'sqlite:///:memory:'
         elif database.startswith('sqlite:'):

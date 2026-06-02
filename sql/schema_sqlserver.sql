@@ -67,6 +67,26 @@ BEGIN
         CONSTRAINT fk_exposure_contact FOREIGN KEY (contact_patient_id) REFERENCES dbo.Dim_Patient(patient_id),
         CONSTRAINT chk_fact_exposure_count_positive CHECK (count_exposure > 0)
     );
+
+END;
+
+IF OBJECT_ID(N'dbo.Fact_Iceberg_Cuboid', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Fact_Iceberg_Cuboid (
+        cuboid_id BIGINT IDENTITY(1, 1) NOT NULL CONSTRAINT pk_fact_iceberg_cuboid PRIMARY KEY,
+        run_id VARCHAR(64) NOT NULL,
+        dimension_values_json NVARCHAR(MAX) NOT NULL,
+        support_count INT NOT NULL,
+        min_sup INT NOT NULL,
+        month_id INT NULL,
+        ind1_site VARCHAR(100) NULL,
+        ind2_site VARCHAR(100) NULL,
+        pair_sars VARCHAR(100) NULL,
+        created_at DATETIME2 NOT NULL CONSTRAINT df_fact_iceberg_created_at DEFAULT SYSUTCDATETIME(),
+
+        CONSTRAINT chk_iceberg_support_positive CHECK (support_count > 0),
+        CONSTRAINT chk_iceberg_min_sup_positive CHECK (min_sup > 0)
+    );
 END;
 
 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'idx_dim_time_date')
@@ -97,6 +117,12 @@ IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'idx_fact_exposure_composi
     CREATE INDEX idx_fact_exposure_composite ON dbo.Fact_Exposure(time_id, location_id, patient_id);
 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'idx_fact_exposure_threshold')
     CREATE INDEX idx_fact_exposure_threshold ON dbo.Fact_Exposure(is_threshold_exceeded);
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'idx_fact_iceberg_run')
+    CREATE INDEX idx_fact_iceberg_run ON dbo.Fact_Iceberg_Cuboid(run_id);
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'idx_fact_iceberg_month')
+    CREATE INDEX idx_fact_iceberg_month ON dbo.Fact_Iceberg_Cuboid(month_id);
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'idx_fact_iceberg_site_pair')
+    CREATE INDEX idx_fact_iceberg_site_pair ON dbo.Fact_Iceberg_Cuboid(ind1_site, ind2_site);
 GO
 
 CREATE OR ALTER VIEW dbo.v_exposure_summary AS

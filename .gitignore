@@ -16,6 +16,10 @@ venv/
 reports/figures/*
 !reports/figures/.gitkeep
 
+warehouse/
+*.duckdb
+*.duckdb.wal
+
 .DS_Store
 Thumbs.db
 .vscode/

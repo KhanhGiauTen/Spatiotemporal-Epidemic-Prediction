@@ -13,8 +13,11 @@ load_dotenv()
 class DatabaseConfig:
     """Database configuration using environment variables"""
     
-    # Database type: sqlite, postgresql, mysql, mssql
-    DB_TYPE = os.getenv('DB_TYPE', 'sqlite')
+    # Database type: duckdb, sqlite, postgresql, mysql, mssql
+    DB_TYPE = os.getenv('DB_TYPE', 'duckdb')
+
+    # DuckDB settings
+    DUCKDB_PATH = os.getenv('DUCKDB_PATH', 'warehouse/epidemic.duckdb')
     
     # SQLite settings
     SQLITE_DB_NAME = os.getenv('SQLITE_DB_NAME', 'warehouse')
@@ -54,7 +57,9 @@ class DatabaseConfig:
         Returns:
             SQLAlchemy connection string
         """
-        if cls.DB_TYPE == 'sqlite':
+        if cls.DB_TYPE == 'duckdb':
+            return f'duckdb:///{cls.DUCKDB_PATH}'
+        elif cls.DB_TYPE == 'sqlite':
             return f'sqlite:///{cls.SQLITE_DB_NAME}.db'
         elif cls.DB_TYPE == 'postgresql':
             return (
@@ -88,7 +93,8 @@ class DatabaseConfig:
                 else 'local'
             ),
             'database': (
-                cls.SQLITE_DB_NAME if cls.DB_TYPE == 'sqlite'
+                cls.DUCKDB_PATH if cls.DB_TYPE == 'duckdb'
+                else cls.SQLITE_DB_NAME if cls.DB_TYPE == 'sqlite'
                 else cls.POSTGRES_DB if cls.DB_TYPE == 'postgresql'
                 else cls.MYSQL_DB if cls.DB_TYPE == 'mysql'
                 else cls.MSSQL_DB

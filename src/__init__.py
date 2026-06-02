@@ -8,7 +8,7 @@ Modules:
 - star_tree: Star Tree prefix tree for trajectory compression
 """
 
-from .db_manager import DatabaseManager, get_database_manager, Base
+from .db_manager import DatabaseManager, get_database_manager, Base, FactIcebergCuboid
 from .config import DatabaseConfig
 from .data_loader import DataWarehouseLoader
 from .star_tree import StarNode, StarTree
@@ -19,6 +19,7 @@ __all__ = [
     'DatabaseManager',
     'get_database_manager',
     'Base',
+    'FactIcebergCuboid',
     'DatabaseConfig',
     'DataWarehouseLoader',
     'StarNode',
