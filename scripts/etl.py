@@ -7,6 +7,7 @@ the processing steps reusable from scripts or tests.
 
 from __future__ import annotations
 
+import argparse
 import json
 from pathlib import Path
 from typing import Any
@@ -42,6 +43,63 @@ DEFAULT_METRIC_COLS = [
     "hh_ar",
 ]
 
+REQUIRED_META_COLUMNS = [
+    "indid",
+    "site",
+    "agegrp9",
+    "sex",
+    "hhid",
+    "smokecignow1",
+    "bmicat",
+    "index",
+    "sars",
+    "sus",
+    "ixesarsvarf1",
+]
+
+REQUIRED_NET_COLUMNS = [
+    "t",
+    "date",
+    "pair",
+    "indid1",
+    "indid2",
+    "hh",
+    "duration_sec",
+    "no_ts",
+    "contacts",
+    "contacts_infected",
+    "hcir",
+    "hh_ar",
+    "pair_sars",
+]
+
+
+def _jsonable(value: Any) -> Any:
+    """Convert pandas/numpy/set values into JSON-serializable values."""
+    if isinstance(value, set):
+        return sorted(str(item) for item in value)
+    if isinstance(value, dict):
+        return {str(key): _jsonable(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_jsonable(item) for item in value]
+    if hasattr(value, "item"):
+        try:
+            return value.item()
+        except Exception:
+            pass
+    return value
+
+
+def ensure_required_columns(
+    df: pd.DataFrame,
+    required_columns: list[str],
+    label: str,
+) -> None:
+    """Raise a clear error when an ETL input is missing required fields."""
+    missing = [column for column in required_columns if column not in df.columns]
+    if missing:
+        raise ValueError(f"{label} is missing required columns: {missing}")
+
 
 def preprocess_metadata(
     df_meta: pd.DataFrame,
@@ -65,6 +123,9 @@ def preprocess_metadata(
 
 def validate_inputs(df_meta: pd.DataFrame, df_net: pd.DataFrame) -> dict[str, Any]:
     """Run lightweight consistency and range checks used in the notebook."""
+    ensure_required_columns(df_meta, REQUIRED_META_COLUMNS, "metadata")
+    ensure_required_columns(df_net, REQUIRED_NET_COLUMNS, "contact network")
+
     meta_ids = set(df_meta["indid"].unique())
     net_ids = set(df_net["indid1"].unique()).union(set(df_net["indid2"].unique()))
 
@@ -79,6 +140,22 @@ def validate_inputs(df_meta: pd.DataFrame, df_net: pd.DataFrame) -> dict[str, An
         "hcir_out_of_range_count": len(hcir_out_of_range),
         "hh_ar_out_of_range_count": len(hh_ar_out_of_range),
         "total_out_of_range_count": len(hcir_out_of_range) + len(hh_ar_out_of_range),
+        "metadata_row_count": int(len(df_meta)),
+        "network_row_count": int(len(df_net)),
+        "metadata_duplicate_indid_count": int(df_meta["indid"].duplicated().sum()),
+        "network_duplicate_pair_time_count": int(
+            df_net[["pair", "t"]].duplicated().sum()
+        ),
+        "metadata_null_counts": {
+            column: int(df_meta[column].isna().sum())
+            for column in REQUIRED_META_COLUMNS
+            if column in df_meta.columns
+        },
+        "network_null_counts": {
+            column: int(df_net[column].isna().sum())
+            for column in REQUIRED_NET_COLUMNS
+            if column in df_net.columns
+        },
     }
 
 
@@ -236,6 +313,8 @@ def save_outputs(
     df_result: pd.DataFrame,
     mapping_dict: dict[str, dict[Any, int]],
     output_dir: str | Path,
+    validation_report: dict[str, Any] | None = None,
+    reports_dir: str | Path | None = None,
 ) -> dict[str, Path]:
     """Save the encoded dataset and mapping dictionary."""
     output_dir = Path(output_dir)
@@ -249,16 +328,30 @@ def save_outputs(
 
     df_result.to_csv(csv_path, index=False)
 
-    return {"mapping_json": json_path, "final_csv": csv_path}
+    paths = {"mapping_json": json_path, "final_csv": csv_path}
+
+    if validation_report is not None and reports_dir is not None:
+        reports_dir = Path(reports_dir)
+        reports_dir.mkdir(parents=True, exist_ok=True)
+        validation_path = reports_dir / "etl_validation.json"
+        with validation_path.open("w", encoding="utf-8") as f:
+            json.dump(_jsonable(validation_report), f, ensure_ascii=False, indent=4)
+        paths["validation_json"] = validation_path
+
+    return paths
 
 
 def run_etl(
     df_meta: pd.DataFrame,
     df_net: pd.DataFrame,
     output_dir: str | Path | None = None,
+    reports_dir: str | Path | None = None,
     save_artifacts: bool = True,
 ) -> dict[str, Any]:
     """Run the full ETL pipeline and return notebook-friendly outputs."""
+    ensure_required_columns(df_meta, REQUIRED_META_COLUMNS, "metadata")
+    ensure_required_columns(df_net, REQUIRED_NET_COLUMNS, "contact network")
+
     df_meta_cleaned, f0_records = preprocess_metadata(df_meta)
     validation_report = validate_inputs(df_meta_cleaned, df_net)
     df_net_cleaned, outlier_summary = cap_outliers_iqr(df_net)
@@ -268,7 +361,13 @@ def run_etl(
 
     saved_paths: dict[str, Path] = {}
     if save_artifacts and output_dir is not None:
-        saved_paths = save_outputs(df_result, mapping_dict, output_dir)
+        saved_paths = save_outputs(
+            df_result,
+            mapping_dict,
+            output_dir,
+            validation_report=validation_report,
+            reports_dir=reports_dir,
+        )
 
     return {
         "df_meta_cleaned": df_meta_cleaned,
@@ -284,3 +383,38 @@ def run_etl(
         "saved_paths": saved_paths,
         **schema,
     }
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Run SASHTS Pandas ETL.")
+    parser.add_argument("--metadata-path", default="data/raw/sashts_metadata.csv")
+    parser.add_argument("--network-path", default="data/raw/sashts_contact_network.csv")
+    parser.add_argument("--output-dir", default="data/processed")
+    parser.add_argument("--reports-dir", default="reports")
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
+    metadata_path = Path(args.metadata_path)
+    network_path = Path(args.network_path)
+
+    df_meta = pd.read_csv(metadata_path)
+    df_net = pd.read_csv(network_path)
+    outputs = run_etl(
+        df_meta,
+        df_net,
+        output_dir=args.output_dir,
+        reports_dir=args.reports_dir,
+        save_artifacts=True,
+    )
+
+    print("ETL completed")
+    for name, path in outputs["saved_paths"].items():
+        print(f"{name}: {path}")
+    print(f"processed_rows: {len(outputs['df_result'])}")
+    print(f"dimensions: {', '.join(outputs['sorted_dim_cols'])}")
+
+
+if __name__ == "__main__":
+    main()

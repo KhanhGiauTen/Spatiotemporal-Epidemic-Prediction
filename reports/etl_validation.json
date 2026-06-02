@@ -1,0 +1,41 @@
+{
+    "metadata_id_count": 340,
+    "network_id_count": 340,
+    "ids_in_net_not_in_meta": [],
+    "ids_in_meta_not_in_net": [],
+    "hcir_out_of_range_count": 0,
+    "hh_ar_out_of_range_count": 0,
+    "total_out_of_range_count": 0,
+    "metadata_row_count": 340,
+    "network_row_count": 140542,
+    "metadata_duplicate_indid_count": 0,
+    "network_duplicate_pair_time_count": 4402,
+    "metadata_null_counts": {
+        "indid": 0,
+        "site": 0,
+        "agegrp9": 0,
+        "sex": 0,
+        "hhid": 0,
+        "smokecignow1": 0,
+        "bmicat": 0,
+        "index": 0,
+        "sars": 0,
+        "sus": 0,
+        "ixesarsvarf1": 0
+    },
+    "network_null_counts": {
+        "t": 0,
+        "date": 0,
+        "pair": 0,
+        "indid1": 0,
+        "indid2": 0,
+        "hh": 0,
+        "duration_sec": 0,
+        "no_ts": 0,
+        "contacts": 0,
+        "contacts_infected": 0,
+        "hcir": 0,
+        "hh_ar": 0,
+        "pair_sars": 0
+    }
+}
