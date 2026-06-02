@@ -1,0 +1,8 @@
+﻿metric,value
+node_strategy,profile_nodes_from_encoded_individual_attributes
+num_nodes,250
+num_edges,848
+density,0.027244979919678714
+num_connected_components,4
+largest_component_size,130
+top_percent,0.05

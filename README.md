@@ -112,17 +112,20 @@ Pipeline phân cụm ground zero hiện chạy bằng script Python 3.11:
 ```bash
 py -3.11 scripts/run_clustering_py311.py
 ```
+
 ## Cách chạy nhanh — Issue 10 & Issue 11
 
 Chạy từ thư mục gốc của project. Kích hoạt virtualenv trước.
 
 Issue 10 — Outbreak classification (ghi log):
+
 ```powershell
 & .\.venv\Scripts\Activate.ps1
 python .\src\outbreak_classification.py --project-root . --data-path .\data\processed\sashts_final_dataset.csv --mapping-path .\data\processed\mapping_dict.json --output-dir .\reports\issue_10_outbreak_classification --model random_forest --test-size 0.2 --random-state 42 2>&1 | Tee-Object run_outbreak_classification.log
 ```
 
 Issue 11 — Contact network analysis (ghi log):
+
 ```powershell
 & .\.venv\Scripts\Activate.ps1
 python .\src\contact_network_analysis.py --processed-data .\data\processed\sashts_final_dataset.csv --mapping-path .\data\processed\mapping_dict.json --output-dir .\reports\issue_11_contact_network --top-percent 0.05 2>&1 | Tee-Object run_contact_network.log
@@ -150,6 +153,42 @@ Repo này thuộc nhóm bài toán Data Mining ứng dụng trong dịch tễ h�
 - Frequent pattern mining.
 - Multidimensional cube mining.
 - Network/contact analysis.
+
+### Backend Startup
+
+Install Python dependencies from the project root:
+
+```bash
+pip install -r requirements.txt
+```
+
+Run the FastAPI server:
+
+```bash
+uvicorn src.api.main:app --reload --host 127.0.0.1 --port 8000
+```
+
+### Frontend Startup
+
+Install and run the web map from the `web-map/` directory:
+
+```bash
+npm install
+npm run dev
+```
+
+Open:
+
+```text
+http://localhost:3000
+```
+
+By default, the frontend reads from `http://localhost:8000`. To point it at a
+different API server, set:
+
+```bash
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+```
 
 Mục tiêu cuối cùng là tạo nền tảng dữ liệu có thể mở rộng cho phân tích mẫu
 lây nhiễm theo không gian, thời gian và đặc trưng cá nhân.

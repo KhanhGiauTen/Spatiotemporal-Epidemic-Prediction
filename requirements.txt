@@ -4,6 +4,8 @@ matplotlib
 seaborn
 scikit-learn
 networkx
+fastapi>=0.111.0
+uvicorn[standard]>=0.29.0
 
 # Database & ORM
 sqlalchemy>=2.0.0

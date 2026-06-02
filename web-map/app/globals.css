@@ -1,0 +1,286 @@
+@import "leaflet/dist/leaflet.css";
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  background: #f4f6f9;
+  color: #172033;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.nav {
+  align-items: center;
+  background: #ffffff;
+  border-bottom: 1px solid #d8dee8;
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+  padding: 12px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 500;
+}
+
+.brand {
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.navLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.navLinks a {
+  border-radius: 6px;
+  color: #445064;
+  font-size: 14px;
+  padding: 8px 10px;
+}
+
+.navLinks a.active,
+.navLinks a:hover {
+  background: #e9edf5;
+  color: #111827;
+}
+
+.page {
+  display: flex;
+  min-height: calc(100vh - 57px);
+  flex-direction: column;
+}
+
+.topbar {
+  border-bottom: 1px solid #d8dee8;
+  background: #ffffff;
+  padding: 18px 24px;
+}
+
+.topbar h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.topbar p {
+  color: #5b667a;
+  font-size: 14px;
+  margin: 6px 0 0;
+}
+
+.content {
+  margin: 0 auto;
+  max-width: 1180px;
+  padding: 24px;
+  width: 100%;
+}
+
+.grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+}
+
+.grid.compact {
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  padding: 0;
+}
+
+.metricCard,
+.panel {
+  background: #ffffff;
+  border: 1px solid #d8dee8;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.metricCard span {
+  color: #657084;
+  display: block;
+  font-size: 13px;
+  margin-bottom: 8px;
+  text-transform: capitalize;
+}
+
+.metricCard strong {
+  display: block;
+  font-size: 24px;
+}
+
+.twoColumn {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(280px, 430px) 1fr;
+}
+
+.form {
+  display: grid;
+  gap: 14px;
+}
+
+.form label {
+  display: grid;
+  gap: 6px;
+}
+
+.form label span {
+  color: #445064;
+  font-size: 13px;
+  text-transform: capitalize;
+}
+
+.form input {
+  border: 1px solid #c6cfdd;
+  border-radius: 6px;
+  font-size: 15px;
+  padding: 10px;
+}
+
+button {
+  background: #1f4f82;
+  border: 0;
+  border-radius: 6px;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 11px 14px;
+}
+
+button:hover {
+  background: #183d65;
+}
+
+.mapWrap {
+  flex: 1;
+  min-height: 620px;
+  position: relative;
+}
+
+.map {
+  height: 100%;
+  min-height: 620px;
+  width: 100%;
+}
+
+.legend {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #d8dee8;
+  border-radius: 6px;
+  box-shadow: 0 8px 20px rgba(17, 24, 39, 0.12);
+  display: flex;
+  gap: 8px;
+  left: 18px;
+  padding: 10px 12px;
+  position: absolute;
+  top: 18px;
+  z-index: 450;
+}
+
+.legendSwatch {
+  background: #ef4444;
+  border: 2px solid #991b1b;
+  display: inline-block;
+  height: 14px;
+  width: 24px;
+}
+
+.status {
+  align-items: center;
+  color: #5b667a;
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  min-height: 320px;
+  padding: 24px;
+}
+
+.popupTitle {
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.popupRow {
+  margin-top: 2px;
+}
+
+.tableWrap {
+  background: #ffffff;
+  border: 1px solid #d8dee8;
+  border-radius: 8px;
+  margin: 12px 0 24px;
+  overflow: auto;
+}
+
+table {
+  border-collapse: collapse;
+  min-width: 760px;
+  width: 100%;
+}
+
+th,
+td {
+  border-bottom: 1px solid #e4e8ef;
+  font-size: 13px;
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background: #f8fafc;
+  color: #445064;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+h2 {
+  font-size: 18px;
+  margin: 22px 0 10px;
+}
+
+.summaryLine,
+.muted {
+  color: #5b667a;
+}
+
+.error {
+  color: #b91c1c;
+}
+
+.result p,
+.prose p {
+  line-height: 1.55;
+}
+
+@media (max-width: 780px) {
+  .nav {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .navLinks {
+    justify-content: flex-start;
+  }
+
+  .twoColumn {
+    grid-template-columns: 1fr;
+  }
+}
