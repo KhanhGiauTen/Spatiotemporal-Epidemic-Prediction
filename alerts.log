@@ -1,0 +1,23 @@
+2026-06-02T13:17:27 [ALERT] High support StarTree cuboid detected: month_id=202105, ind1_site=1, ind2_site=1, pair_sars=2 support=140, min_sup=30, source=star_tree_cuboid
+2026-06-02T13:17:27 [ALERT] High support StarTree cuboid detected: month_id=202106, ind1_site=1, ind2_site=1, pair_sars=2 support=84, min_sup=30, source=star_tree_cuboid
+2026-06-02T13:17:27 [ALERT] High support StarTree cuboid detected: ind1_site=1, ind2_site=1, pair_sars=2 support=232, min_sup=30, source=star_tree_cuboid
+2026-06-02T13:17:27 [ALERT] High support StarTree cuboid detected: month_id=202105, ind2_site=1, pair_sars=2 support=140, min_sup=30, source=star_tree_cuboid
+2026-06-02T13:17:27 [ALERT] High support StarTree cuboid detected: month_id=202105, ind1_site=1, pair_sars=2 support=140, min_sup=30, source=star_tree_cuboid
+2026-06-02T13:17:27 [ALERT] High support StarTree cuboid detected: month_id=202105, ind1_site=1, ind2_site=1 support=154, min_sup=30, source=star_tree_cuboid
+2026-06-02T13:17:27 [ALERT] High support StarTree cuboid detected: month_id=202106, ind2_site=1, pair_sars=2 support=84, min_sup=30, source=star_tree_cuboid
+2026-06-02T13:17:27 [ALERT] High support StarTree cuboid detected: month_id=202106, ind1_site=1, pair_sars=2 support=84, min_sup=30, source=star_tree_cuboid
+2026-06-02T13:17:27 [ALERT] High support StarTree cuboid detected: month_id=202106, ind1_site=1, ind2_site=1 support=88, min_sup=30, source=star_tree_cuboid
+2026-06-02T13:17:27 [ALERT] High support StarTree cuboid detected: ind2_site=1, pair_sars=2 support=232, min_sup=30, source=star_tree_cuboid
+2026-06-02T13:17:27 [ALERT] High support StarTree cuboid detected: ind1_site=1, pair_sars=2 support=232, min_sup=30, source=star_tree_cuboid
+2026-06-02T13:17:27 [ALERT] High support StarTree cuboid detected: ind1_site=1, ind2_site=1 support=250, min_sup=30, source=star_tree_cuboid
+2026-06-02T13:17:27 [ALERT] High support StarTree cuboid detected: month_id=202105, pair_sars=2 support=140, min_sup=30, source=star_tree_cuboid
+2026-06-02T13:17:27 [ALERT] High support StarTree cuboid detected: month_id=202105, ind2_site=1 support=154, min_sup=30, source=star_tree_cuboid
+2026-06-02T13:17:27 [ALERT] High support StarTree cuboid detected: month_id=202105, ind1_site=1 support=154, min_sup=30, source=star_tree_cuboid
+2026-06-02T13:17:27 [ALERT] High support StarTree cuboid detected: month_id=202106, pair_sars=2 support=84, min_sup=30, source=star_tree_cuboid
+2026-06-02T13:17:27 [ALERT] High support StarTree cuboid detected: month_id=202106, ind2_site=1 support=88, min_sup=30, source=star_tree_cuboid
+2026-06-02T13:17:27 [ALERT] High support StarTree cuboid detected: month_id=202106, ind1_site=1 support=88, min_sup=30, source=star_tree_cuboid
+2026-06-02T13:17:27 [ALERT] High support StarTree cuboid detected: pair_sars=2 support=232, min_sup=30, source=star_tree_cuboid
+2026-06-02T13:17:27 [ALERT] High support StarTree cuboid detected: ind2_site=1 support=250, min_sup=30, source=star_tree_cuboid
+2026-06-02T13:17:27 [ALERT] High support StarTree cuboid detected: ind1_site=1 support=250, min_sup=30, source=star_tree_cuboid
+2026-06-02T13:17:27 [ALERT] High support StarTree cuboid detected: month_id=202105 support=154, min_sup=30, source=star_tree_cuboid
+2026-06-02T13:17:27 [ALERT] High support StarTree cuboid detected: month_id=202106 support=88, min_sup=30, source=star_tree_cuboid

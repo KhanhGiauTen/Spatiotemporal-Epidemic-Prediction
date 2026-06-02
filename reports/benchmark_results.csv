@@ -1,0 +1,11 @@
+dataset_size,min_sup,algorithm,runtime_seconds,peak_memory_mb,num_cuboids,status,error
+10000,50,Star-cubing,0.217454,1.083008,647,ok,
+10000,50,BUC baseline,0.053251,0.365971,647,ok,
+50000,250,Star-cubing,1.145402,5.432343,1585,ok,
+50000,250,BUC baseline,0.265291,1.205788,1585,ok,
+100000,500,Star-cubing,2.498834,10.756386,1835,ok,
+100000,500,BUC baseline,0.518333,2.250862,1835,ok,
+500000,2500,Star-cubing,12.545965,53.642303,1956,ok,
+500000,2500,BUC baseline,4.566782,9.859997,1956,ok,
+1000000,5000,Star-cubing,23.95739,107.316971,1956,ok,
+1000000,5000,BUC baseline,8.971279,19.757763,1956,ok,
