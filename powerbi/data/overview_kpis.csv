@@ -1,0 +1,2 @@
+﻿total_records,total_months,min_month_id,max_month_id,total_contacts,total_infected_contacts,transmission_records,avg_duration_sec,classification_accuracy,classification_f1_binary,classification_train_rows,classification_test_rows,network_nodes,network_edges,network_density,network_components
+140542,11,197001,202108,595754.0,320070.0,63880,42.168462096739766,0.7630529835390947,0.8427431400162164,124990,15552,250,848,0.027244979919678714,4

@@ -1,0 +1,5 @@
+﻿actual_class,predicted_class,count
+Actual_Safe,Pred_Safe,1993
+Actual_Outbreak,Pred_Safe,276
+Actual_Safe,Pred_Outbreak,3409
+Actual_Outbreak,Pred_Outbreak,9874
