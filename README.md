@@ -93,6 +93,53 @@ Tạo file `.env` từ `.env.example` nếu cần cấu hình database thật. M
 thể dùng SQLite cho kiểm thử local; PostgreSQL và SQL Server được hỗ trợ qua
 connection string SQLAlchemy.
 
+## Chạy ETL và Data Warehouse End-to-End
+
+Chạy ETL độc lập:
+
+```powershell
+python scripts/etl.py --metadata-path data/raw/sashts_metadata.csv --network-path data/raw/sashts_contact_network.csv --output-dir data/processed --reports-dir reports
+```
+
+Chạy full pipeline với DuckDB local:
+
+```powershell
+python scripts/run_pipeline.py --dw duckdb --duckdb-path warehouse/epidemic.duckdb --refresh
+```
+
+Pipeline sẽ tạo staging tables, `Dim_Time`, `Dim_Location`, `Dim_Patient`,
+`Fact_Exposure`, `Fact_Iceberg_Cuboid`, và refresh `powerbi/data/*.csv`.
+
+Chạy với PostgreSQL nếu có server:
+
+```powershell
+python scripts/run_pipeline.py --dw postgresql --database-url "postgresql+psycopg2://user:password@localhost:5432/epidemic_dw" --refresh
+```
+
+Query demo DuckDB:
+
+```sql
+SELECT COUNT(*) FROM "Fact_Exposure";
+SELECT COUNT(*) FROM "Fact_Iceberg_Cuboid";
+SELECT * FROM v_exposure_by_location_time LIMIT 10;
+```
+
+## Power BI
+
+Dashboard có tại `powerbi/EpidemicDashboard.pbix`.
+
+- DB mode: kết nối DuckDB qua ODBC tới `warehouse/epidemic.duckdb`.
+- CSV fallback: import hoặc refresh các file `powerbi/data/*.csv`.
+
+Chuẩn bị CSV fallback từ DB:
+
+```powershell
+python scripts/prepare_powerbi_data.py --project-root . --source duckdb --duckdb-path warehouse/epidemic.duckdb --export-csv
+```
+
+Xem thêm: `powerbi/docs/powerbi_connection_guide.md` và
+`docs/ETL_DW_PowerBI_Report.md`.
+
 ## Chạy Test
 
 ```bash

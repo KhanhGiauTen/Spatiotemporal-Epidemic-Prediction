@@ -15,6 +15,8 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
 
 import pandas as pd
+from sqlalchemy import create_engine, text
+from sqlalchemy.engine import Engine
 
 
 NA_VALUE = "N/A"
@@ -54,6 +56,33 @@ def read_json_optional(path: Path, label: str) -> Dict[str, Any]:
     except Exception as exc:  # pragma: no cover - defensive IO branch
         warn(f"Could not read {label} at {path}: {exc}")
         return {}
+
+
+def make_db_engine(
+    source: str,
+    duckdb_path: Path,
+    database_url: Optional[str],
+) -> Optional[Engine]:
+    if source == "csv":
+        return None
+    if source == "duckdb":
+        return create_engine(f"duckdb:///{duckdb_path.as_posix()}")
+    if source == "postgresql":
+        if not database_url:
+            raise ValueError("--database-url is required when --source postgresql")
+        return create_engine(database_url)
+    raise ValueError(f"Unsupported Power BI source: {source}")
+
+
+def read_sql_optional(engine: Optional[Engine], query: str, label: str) -> Optional[pd.DataFrame]:
+    if engine is None:
+        return None
+    try:
+        with engine.connect() as conn:
+            return pd.read_sql(text(query), conn)
+    except Exception as exc:
+        warn(f"Could not read {label} from database: {exc}")
+        return None
 
 
 def write_csv(df: pd.DataFrame, output_dir: Path, filename: str) -> None:
@@ -171,11 +200,11 @@ def prepare_exposure_summary(processed_df: Optional[pd.DataFrame], output_dir: P
 
     write_csv(summary[columns], output_dir, "exposure_summary.csv")
 
-
-def prepare_cube_analytics(project_root: Path, output_dir: Path) -> None:
-    clustered_path = project_root / "reports" / "ground_zero_clustered_cuboids.csv"
-    df = read_csv_optional(clustered_path, "ground zero clustered cuboids")
-
+def prepare_cube_analytics(
+    project_root: Path,
+    output_dir: Path,
+    cube_df: Optional[pd.DataFrame] = None,
+) -> None:
     output_columns = [
         "month_id",
         "ind1_site",
@@ -190,6 +219,27 @@ def prepare_cube_analytics(project_root: Path, output_dir: Path) -> None:
         "avg_hcir",
         "avg_hh_ar",
     ]
+
+    if cube_df is not None and not cube_df.empty:
+        cube = cube_df.copy()
+        for col in ["month_id", "ind1_site", "ind2_site", "pair_sars"]:
+            if col not in cube.columns:
+                cube[col] = pd.NA
+        group_cols = ["month_id", "ind1_site", "ind2_site", "pair_sars"]
+        summary = cube.groupby(group_cols, dropna=False).size().reset_index(name="cuboid_count")
+        support = cube.groupby(group_cols, dropna=False)["support_count"].sum().reset_index(name="total_contacts")
+        summary = summary.merge(support, on=group_cols, how="left")
+        summary["total_contacts_infected"] = pd.NA
+        summary["avg_duration_sec"] = pd.NA
+        summary["avg_hcir"] = pd.NA
+        summary["avg_hh_ar"] = pd.NA
+        summary["kmeans_cluster"] = pd.NA
+        summary["dbscan_cluster"] = pd.NA
+        write_csv(summary[output_columns], output_dir, "cube_analytics.csv")
+        return
+
+    clustered_path = project_root / "reports" / "ground_zero_clustered_cuboids.csv"
+    df = read_csv_optional(clustered_path, "ground zero clustered cuboids")
 
     if df is None or df.empty:
         write_csv(pd.DataFrame(columns=output_columns), output_dir, "cube_analytics.csv")
@@ -400,13 +450,35 @@ def prepare_contact_network_outputs(
     write_csv(network_edges, output_dir, "network_edges.csv")
 
 
-def prepare_powerbi_data(project_root: Path) -> None:
+def prepare_powerbi_data(
+    project_root: Path,
+    source: str = "csv",
+    duckdb_path: Path | str = Path("warehouse/epidemic.duckdb"),
+    database_url: Optional[str] = None,
+    export_csv: bool = True,
+) -> None:
     project_root = project_root.resolve()
     output_dir = ensure_output_dir(project_root)
+    duckdb_path = Path(duckdb_path)
+    if not duckdb_path.is_absolute():
+        duckdb_path = project_root / duckdb_path
 
-    processed_df = read_csv_optional(
-        project_root / "data" / "processed" / "sashts_final_dataset.csv",
-        "processed SASHTS dataset",
+    engine = make_db_engine(source=source, duckdb_path=duckdb_path, database_url=database_url)
+
+    processed_df = read_sql_optional(
+        engine,
+        "SELECT * FROM stg_processed_olap",
+        "processed OLAP staging table",
+    )
+    if processed_df is None:
+        processed_df = read_csv_optional(
+            project_root / "data" / "processed" / "sashts_final_dataset.csv",
+            "processed SASHTS dataset",
+        )
+    cube_df = read_sql_optional(
+        engine,
+        'SELECT * FROM "Fact_Iceberg_Cuboid"',
+        "Iceberg cuboid fact table",
     )
     metrics = read_json_optional(
         project_root / "reports" / "issue_10_outbreak_classification" / "metrics.json",
@@ -417,12 +489,21 @@ def prepare_powerbi_data(project_root: Path) -> None:
         "contact network graph summary JSON",
     )
 
+    if not export_csv:
+        print("Power BI DB source checked; CSV export skipped.")
+        if engine is not None:
+            engine.dispose()
+        return
+
     prepare_overview_kpis(processed_df, metrics, graph_summary, output_dir)
     prepare_exposure_summary(processed_df, output_dir)
-    prepare_cube_analytics(project_root, output_dir)
+    prepare_cube_analytics(project_root, output_dir, cube_df=cube_df)
     prepare_ground_zero_clusters(project_root, output_dir)
     prepare_classification_outputs(project_root, output_dir, metrics)
     prepare_contact_network_outputs(project_root, output_dir, graph_summary)
+
+    if engine is not None:
+        engine.dispose()
 
     print(f"\nPower BI data preparation completed. Output directory: {output_dir}")
 
@@ -434,12 +515,44 @@ def parse_args() -> argparse.Namespace:
         default=".",
         help="Path to the repository root. Defaults to current working directory.",
     )
+    parser.add_argument(
+        "--source",
+        choices=["csv", "duckdb", "postgresql"],
+        default="csv",
+        help="Data source for Power BI preparation. CSV remains the fallback.",
+    )
+    parser.add_argument(
+        "--duckdb-path",
+        default="warehouse/epidemic.duckdb",
+        help="DuckDB warehouse file used when --source duckdb.",
+    )
+    parser.add_argument(
+        "--database-url",
+        default=None,
+        help="SQLAlchemy URL used when --source postgresql.",
+    )
+    parser.add_argument(
+        "--export-csv",
+        action="store_true",
+        help="Export CSV files to powerbi/data after reading the selected source.",
+    )
+    parser.add_argument(
+        "--no-export-csv",
+        action="store_true",
+        help="Only validate the selected DB source; do not rewrite powerbi/data CSV files.",
+    )
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
-    prepare_powerbi_data(Path(args.project_root))
+    prepare_powerbi_data(
+        Path(args.project_root),
+        source=args.source,
+        duckdb_path=Path(args.duckdb_path),
+        database_url=args.database_url,
+        export_csv=not args.no_export_csv,
+    )
 
 
 if __name__ == "__main__":
