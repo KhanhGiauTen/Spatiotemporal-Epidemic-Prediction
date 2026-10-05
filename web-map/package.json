@@ -2,14 +2,16 @@
   "name": "epidemic-risk-web-map",
   "version": "0.1.0",
   "private": true,
+  "engines": { "node": "24.x" },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "lint": "next lint"
+    "start": "next start",
+    "test": "node --experimental-strip-types scripts/test-demo.mjs"
   },
   "dependencies": {
     "leaflet": "^1.9.4",
-    "next": "^14.2.3",
+    "next": "15.5.26",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-leaflet": "^4.2.1"
@@ -21,7 +23,8 @@
     "@types/react": "^18.3.2",
     "@types/react-dom": "^18.3.0",
     "eslint": "^8.57.0",
-    "eslint-config-next": "^14.2.3",
+    "eslint-config-next": "15.5.26",
     "typescript": "^5.4.5"
-  }
+  },
+  "overrides": { "postcss": "8.5.28", "sharp": "0.35.5" }
 }

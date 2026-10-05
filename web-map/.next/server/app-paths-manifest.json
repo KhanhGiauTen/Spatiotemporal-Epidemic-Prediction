@@ -1,8 +1,0 @@
-{
-  "/page": "app/page.js",
-  "/prediction/page": "app/prediction/page.js",
-  "/clusters/page": "app/clusters/page.js",
-  "/network/page": "app/network/page.js",
-  "/about/page": "app/about/page.js",
-  "/risk-map/page": "app/risk-map/page.js"
-}

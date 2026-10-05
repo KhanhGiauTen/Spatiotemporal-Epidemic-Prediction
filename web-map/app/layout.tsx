@@ -4,7 +4,7 @@ import Nav from "./nav";
 
 export const metadata = {
   title: "Epidemic Risk Map",
-  description: "Interactive map for predicted outbreak risk polygons",
+  description: "Coursework analytics demo with aggregate data and illustrative geographic zones, not a public-health service.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -12,6 +12,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en">
       <body>
         <Nav />
+        <aside className="demoNotice">Coursework demo. Aggregate snapshots only. Map zones are illustrative, not real outbreak locations. No medical advice.</aside>
         {children}
       </body>
     </html>

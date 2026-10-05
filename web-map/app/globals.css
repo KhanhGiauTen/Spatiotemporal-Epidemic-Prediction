@@ -39,6 +39,9 @@ a {
   font-weight: 700;
   white-space: nowrap;
 }
+.demoNotice { padding: 12px 24px; border-bottom: 1px solid #b8d2c5; background: #edf7f0; color: #28553e; font-size: 13px; line-height: 1.5; }
+input, select { max-width: 100%; min-width: 0; }
+:focus-visible { outline: 3px solid #0071e3; outline-offset: 3px; }
 
 .navLinks {
   display: flex;
@@ -187,7 +190,7 @@ button:hover {
   box-shadow: 0 8px 20px rgba(17, 24, 39, 0.12);
   display: flex;
   gap: 8px;
-  left: 18px;
+  left: 58px;
   padding: 10px 12px;
   position: absolute;
   top: 18px;
@@ -222,6 +225,7 @@ button:hover {
 }
 
 .tableWrap {
+  max-width: 100%;
   background: #ffffff;
   border: 1px solid #d8dee8;
   border-radius: 8px;
@@ -271,6 +275,9 @@ h2 {
 }
 
 @media (max-width: 780px) {
+  .brand { white-space: normal; }
+  .nav, .content, .topbar { padding-left: 16px; padding-right: 16px; }
+  .legend { max-width: calc(100% - 74px); font-size: 12px; }
   .nav {
     align-items: flex-start;
     flex-direction: column;

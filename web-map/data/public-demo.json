@@ -1,0 +1,1487 @@
+{
+  "overview": {
+    "total_records": 140542,
+    "total_contacts": 595754.0,
+    "infected_contacts": 320070.0,
+    "classification_accuracy": 0.7630529835390947,
+    "precision": 0.7433561695400136,
+    "recall": 0.972807881773399,
+    "f1_score": 0.8427431400162164,
+    "network_nodes": 250,
+    "network_edges": 848,
+    "network_density": 0.027244979919678714,
+    "connected_components": 4,
+    "number_of_clusters": 1817,
+    "high_risk_zones": 394,
+    "unavailable_values": "Missing source files return null values or empty arrays."
+  },
+  "clusters": {
+    "number_of_clusters": 50,
+    "cluster_records": [
+      {
+        "algorithm": "KMeans",
+        "cluster_id": 1,
+        "record_count": 43692.0,
+        "total_contacts": 217198.0,
+        "total_contacts_infected": 171314.0,
+        "avg_duration_sec": 44.02911288107663,
+        "avg_hcir": 80.11530715005036,
+        "avg_hh_ar": 83.4589398516891,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.833,
+        "risk_level": "high",
+        "predicted_outbreak": true
+      },
+      {
+        "algorithm": "KMeans",
+        "cluster_id": 0,
+        "record_count": 43074.0,
+        "total_contacts": 179782.0,
+        "total_contacts_infected": 46920.0,
+        "avg_duration_sec": 40.2832335051307,
+        "avg_hcir": 27.023355156242744,
+        "avg_hh_ar": 42.34656637414682,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.4,
+        "risk_level": "low",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "KMeans",
+        "cluster_id": 2,
+        "record_count": 26888.0,
+        "total_contacts": 99387.0,
+        "total_contacts_infected": 50918.0,
+        "avg_duration_sec": 42.16676584349896,
+        "avg_hcir": 49.94372954477834,
+        "avg_hh_ar": 62.616817911335914,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.554,
+        "risk_level": "medium",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "KMeans",
+        "cluster_id": 3,
+        "record_count": 26888.0,
+        "total_contacts": 99387.0,
+        "total_contacts_infected": 50918.0,
+        "avg_duration_sec": 42.16676584349896,
+        "avg_hcir": 49.94372954477834,
+        "avg_hh_ar": 62.616817911335914,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.554,
+        "risk_level": "medium",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 171,
+        "record_count": 2628.0,
+        "total_contacts": 15768.0,
+        "total_contacts_infected": 10512.0,
+        "avg_duration_sec": 58.721461187214615,
+        "avg_hcir": 67.0,
+        "avg_hh_ar": 71.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.608,
+        "risk_level": "medium",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 249,
+        "record_count": 1860.0,
+        "total_contacts": 7440.0,
+        "total_contacts_infected": 3720.0,
+        "avg_duration_sec": 47.935483870967744,
+        "avg_hcir": 50.0,
+        "avg_hh_ar": 60.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.475,
+        "risk_level": "medium",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 96,
+        "record_count": 1620.0,
+        "total_contacts": 9720.0,
+        "total_contacts_infected": 8100.0,
+        "avg_duration_sec": 51.135802469135804,
+        "avg_hcir": 83.0,
+        "avg_hh_ar": 86.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.745,
+        "risk_level": "medium",
+        "predicted_outbreak": true
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 47,
+        "record_count": 1430.0,
+        "total_contacts": 8580.0,
+        "total_contacts_infected": 0.0,
+        "avg_duration_sec": 44.11188811188811,
+        "avg_hcir": 0.0,
+        "avg_hh_ar": 14.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.046,
+        "risk_level": "low",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 416,
+        "record_count": 1367.0,
+        "total_contacts": 4101.0,
+        "total_contacts_infected": 0.0,
+        "avg_duration_sec": 47.812728602779806,
+        "avg_hcir": 0.0,
+        "avg_hh_ar": 25.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.079,
+        "risk_level": "low",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 844,
+        "record_count": 1367.0,
+        "total_contacts": 4101.0,
+        "total_contacts_infected": 0.0,
+        "avg_duration_sec": 47.812728602779806,
+        "avg_hcir": 0.0,
+        "avg_hh_ar": 25.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.079,
+        "risk_level": "low",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 264,
+        "record_count": 1313.0,
+        "total_contacts": 2626.0,
+        "total_contacts_infected": 0.0,
+        "avg_duration_sec": 50.66260472201066,
+        "avg_hcir": 0.0,
+        "avg_hh_ar": 33.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.103,
+        "risk_level": "low",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 707,
+        "record_count": 1313.0,
+        "total_contacts": 2626.0,
+        "total_contacts_infected": 0.0,
+        "avg_duration_sec": 50.66260472201066,
+        "avg_hcir": 0.0,
+        "avg_hh_ar": 33.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.103,
+        "risk_level": "low",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 18,
+        "record_count": 1141.0,
+        "total_contacts": 5705.0,
+        "total_contacts_infected": 1141.0,
+        "avg_duration_sec": 41.84049079754601,
+        "avg_hcir": 20.0,
+        "avg_hh_ar": 33.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.218,
+        "risk_level": "low",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 503,
+        "record_count": 1141.0,
+        "total_contacts": 5705.0,
+        "total_contacts_infected": 1141.0,
+        "avg_duration_sec": 41.84049079754601,
+        "avg_hcir": 20.0,
+        "avg_hh_ar": 33.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.218,
+        "risk_level": "low",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 167,
+        "record_count": 1123.0,
+        "total_contacts": 6738.0,
+        "total_contacts_infected": 4492.0,
+        "avg_duration_sec": 38.86019590382903,
+        "avg_hcir": 67.0,
+        "avg_hh_ar": 71.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.604,
+        "risk_level": "medium",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 628,
+        "record_count": 1123.0,
+        "total_contacts": 6738.0,
+        "total_contacts_infected": 4492.0,
+        "avg_duration_sec": 38.86019590382903,
+        "avg_hcir": 67.0,
+        "avg_hh_ar": 71.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.604,
+        "risk_level": "medium",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 418,
+        "record_count": 1087.0,
+        "total_contacts": 7609.0,
+        "total_contacts_infected": 6522.0,
+        "avg_duration_sec": 47.89328426862925,
+        "avg_hcir": 86.0,
+        "avg_hh_ar": 88.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.765,
+        "risk_level": "high",
+        "predicted_outbreak": true
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 442,
+        "record_count": 1087.0,
+        "total_contacts": 7609.0,
+        "total_contacts_infected": 6522.0,
+        "avg_duration_sec": 47.89328426862925,
+        "avg_hcir": 86.0,
+        "avg_hh_ar": 88.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.765,
+        "risk_level": "high",
+        "predicted_outbreak": true
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 322,
+        "record_count": 1076.0,
+        "total_contacts": 3228.0,
+        "total_contacts_infected": 2152.0,
+        "avg_duration_sec": 33.08550185873606,
+        "avg_hcir": 67.0,
+        "avg_hh_ar": 75.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.616,
+        "risk_level": "medium",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 759,
+        "record_count": 1076.0,
+        "total_contacts": 3228.0,
+        "total_contacts_infected": 2152.0,
+        "avg_duration_sec": 33.08550185873606,
+        "avg_hcir": 67.0,
+        "avg_hh_ar": 75.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.616,
+        "risk_level": "medium",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 142,
+        "record_count": 922.0,
+        "total_contacts": 5532.0,
+        "total_contacts_infected": 4610.0,
+        "avg_duration_sec": 47.76572668112798,
+        "avg_hcir": 83.0,
+        "avg_hh_ar": 86.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.743,
+        "risk_level": "medium",
+        "predicted_outbreak": true
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 272,
+        "record_count": 880.0,
+        "total_contacts": 1760.0,
+        "total_contacts_infected": 0.0,
+        "avg_duration_sec": 49.47727272727273,
+        "avg_hcir": 0.0,
+        "avg_hh_ar": 33.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.101,
+        "risk_level": "low",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 715,
+        "record_count": 880.0,
+        "total_contacts": 1760.0,
+        "total_contacts_infected": 0.0,
+        "avg_duration_sec": 49.47727272727273,
+        "avg_hcir": 0.0,
+        "avg_hh_ar": 33.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.101,
+        "risk_level": "low",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 196,
+        "record_count": 792.0,
+        "total_contacts": 1584.0,
+        "total_contacts_infected": 792.0,
+        "avg_duration_sec": 48.83838383838384,
+        "avg_hcir": 50.0,
+        "avg_hh_ar": 67.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.493,
+        "risk_level": "medium",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 653,
+        "record_count": 792.0,
+        "total_contacts": 1584.0,
+        "total_contacts_infected": 792.0,
+        "avg_duration_sec": 48.83838383838384,
+        "avg_hcir": 50.0,
+        "avg_hh_ar": 67.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.493,
+        "risk_level": "medium",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 67,
+        "record_count": 774.0,
+        "total_contacts": 3870.0,
+        "total_contacts_infected": 774.0,
+        "avg_duration_sec": 40.723514211886304,
+        "avg_hcir": 20.0,
+        "avg_hh_ar": 33.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.217,
+        "risk_level": "low",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 93,
+        "record_count": 771.0,
+        "total_contacts": 4626.0,
+        "total_contacts_infected": 3855.0,
+        "avg_duration_sec": 44.487678339818416,
+        "avg_hcir": 83.0,
+        "avg_hh_ar": 86.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.742,
+        "risk_level": "medium",
+        "predicted_outbreak": true
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 128,
+        "record_count": 771.0,
+        "total_contacts": 4626.0,
+        "total_contacts_infected": 3855.0,
+        "avg_duration_sec": 44.487678339818416,
+        "avg_hcir": 83.0,
+        "avg_hh_ar": 86.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.742,
+        "risk_level": "medium",
+        "predicted_outbreak": true
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 45,
+        "record_count": 762.0,
+        "total_contacts": 3810.0,
+        "total_contacts_infected": 2286.0,
+        "avg_duration_sec": 43.884514435695536,
+        "avg_hcir": 60.0,
+        "avg_hh_ar": 67.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.551,
+        "risk_level": "medium",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 530,
+        "record_count": 762.0,
+        "total_contacts": 3810.0,
+        "total_contacts_infected": 2286.0,
+        "avg_duration_sec": 43.884514435695536,
+        "avg_hcir": 60.0,
+        "avg_hh_ar": 67.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.551,
+        "risk_level": "medium",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 218,
+        "record_count": 761.0,
+        "total_contacts": 3044.0,
+        "total_contacts_infected": 1522.0,
+        "avg_duration_sec": 45.57161629434954,
+        "avg_hcir": 50.0,
+        "avg_hh_ar": 60.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.472,
+        "risk_level": "medium",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 672,
+        "record_count": 761.0,
+        "total_contacts": 3044.0,
+        "total_contacts_infected": 1522.0,
+        "avg_duration_sec": 45.57161629434954,
+        "avg_hcir": 50.0,
+        "avg_hh_ar": 60.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.472,
+        "risk_level": "medium",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 220,
+        "record_count": 745.0,
+        "total_contacts": 2980.0,
+        "total_contacts_infected": 1490.0,
+        "avg_duration_sec": 47.08724832214765,
+        "avg_hcir": 50.0,
+        "avg_hh_ar": 60.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.472,
+        "risk_level": "medium",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 674,
+        "record_count": 745.0,
+        "total_contacts": 2980.0,
+        "total_contacts_infected": 1490.0,
+        "avg_duration_sec": 47.08724832214765,
+        "avg_hcir": 50.0,
+        "avg_hh_ar": 60.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.472,
+        "risk_level": "medium",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 296,
+        "record_count": 744.0,
+        "total_contacts": 1488.0,
+        "total_contacts_infected": 1488.0,
+        "avg_duration_sec": 45.51075268817204,
+        "avg_hcir": 100.0,
+        "avg_hh_ar": 100.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.882,
+        "risk_level": "high",
+        "predicted_outbreak": true
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 325,
+        "record_count": 744.0,
+        "total_contacts": 1488.0,
+        "total_contacts_infected": 1488.0,
+        "avg_duration_sec": 45.51075268817204,
+        "avg_hcir": 100.0,
+        "avg_hh_ar": 100.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.882,
+        "risk_level": "high",
+        "predicted_outbreak": true
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 91,
+        "record_count": 726.0,
+        "total_contacts": 2904.0,
+        "total_contacts_infected": 0.0,
+        "avg_duration_sec": 36.74931129476584,
+        "avg_hcir": 0.0,
+        "avg_hh_ar": 20.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.062,
+        "risk_level": "low",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 387,
+        "record_count": 713.0,
+        "total_contacts": 2139.0,
+        "total_contacts_infected": 0.0,
+        "avg_duration_sec": 39.32678821879383,
+        "avg_hcir": 0.0,
+        "avg_hh_ar": 25.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.077,
+        "risk_level": "low",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 471,
+        "record_count": 713.0,
+        "total_contacts": 2852.0,
+        "total_contacts_infected": 2852.0,
+        "avg_duration_sec": 39.43899018232819,
+        "avg_hcir": 100.0,
+        "avg_hh_ar": 100.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.882,
+        "risk_level": "high",
+        "predicted_outbreak": true
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 820,
+        "record_count": 713.0,
+        "total_contacts": 2139.0,
+        "total_contacts_infected": 0.0,
+        "avg_duration_sec": 39.32678821879383,
+        "avg_hcir": 0.0,
+        "avg_hh_ar": 25.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.077,
+        "risk_level": "low",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 891,
+        "record_count": 713.0,
+        "total_contacts": 2852.0,
+        "total_contacts_infected": 2852.0,
+        "avg_duration_sec": 39.43899018232819,
+        "avg_hcir": 100.0,
+        "avg_hh_ar": 100.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.882,
+        "risk_level": "high",
+        "predicted_outbreak": true
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 447,
+        "record_count": 687.0,
+        "total_contacts": 2748.0,
+        "total_contacts_infected": 2748.0,
+        "avg_duration_sec": 47.219796215429405,
+        "avg_hcir": 100.0,
+        "avg_hh_ar": 100.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.882,
+        "risk_level": "high",
+        "predicted_outbreak": true
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 870,
+        "record_count": 687.0,
+        "total_contacts": 2748.0,
+        "total_contacts_infected": 2748.0,
+        "avg_duration_sec": 47.219796215429405,
+        "avg_hcir": 100.0,
+        "avg_hh_ar": 100.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.882,
+        "risk_level": "high",
+        "predicted_outbreak": true
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": -1,
+        "record_count": 650.0,
+        "total_contacts": 2822.0,
+        "total_contacts_infected": 1798.0,
+        "avg_duration_sec": 87.01538461538462,
+        "avg_hcir": 64.45538461538462,
+        "avg_hh_ar": 72.14153846153846,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.591,
+        "risk_level": "medium",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 371,
+        "record_count": 633.0,
+        "total_contacts": 1899.0,
+        "total_contacts_infected": 1266.0,
+        "avg_duration_sec": 37.69352290679305,
+        "avg_hcir": 67.0,
+        "avg_hh_ar": 75.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.615,
+        "risk_level": "medium",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 805,
+        "record_count": 633.0,
+        "total_contacts": 1899.0,
+        "total_contacts_infected": 1266.0,
+        "avg_duration_sec": 37.69352290679305,
+        "avg_hcir": 67.0,
+        "avg_hh_ar": 75.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.615,
+        "risk_level": "medium",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 270,
+        "record_count": 603.0,
+        "total_contacts": 1809.0,
+        "total_contacts_infected": 1206.0,
+        "avg_duration_sec": 37.18076285240464,
+        "avg_hcir": 67.0,
+        "avg_hh_ar": 75.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.615,
+        "risk_level": "medium",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 713,
+        "record_count": 603.0,
+        "total_contacts": 1809.0,
+        "total_contacts_infected": 1206.0,
+        "avg_duration_sec": 37.18076285240464,
+        "avg_hcir": 67.0,
+        "avg_hh_ar": 75.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.615,
+        "risk_level": "medium",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 239,
+        "record_count": 600.0,
+        "total_contacts": 2400.0,
+        "total_contacts_infected": 1200.0,
+        "avg_duration_sec": 44.86666666666667,
+        "avg_hcir": 50.0,
+        "avg_hh_ar": 60.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.472,
+        "risk_level": "medium",
+        "predicted_outbreak": false
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 686,
+        "record_count": 600.0,
+        "total_contacts": 2400.0,
+        "total_contacts_infected": 1200.0,
+        "avg_duration_sec": 44.86666666666667,
+        "avg_hcir": 50.0,
+        "avg_hh_ar": 60.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.472,
+        "risk_level": "medium",
+        "predicted_outbreak": false
+      }
+    ],
+    "kmeans_centroids": null,
+    "dbscan_centroids": null,
+    "top_high_risk_clusters": [
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 296,
+        "record_count": 744.0,
+        "total_contacts": 1488.0,
+        "total_contacts_infected": 1488.0,
+        "avg_duration_sec": 45.51075268817204,
+        "avg_hcir": 100.0,
+        "avg_hh_ar": 100.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.882,
+        "risk_level": "high",
+        "predicted_outbreak": true
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 325,
+        "record_count": 744.0,
+        "total_contacts": 1488.0,
+        "total_contacts_infected": 1488.0,
+        "avg_duration_sec": 45.51075268817204,
+        "avg_hcir": 100.0,
+        "avg_hh_ar": 100.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.882,
+        "risk_level": "high",
+        "predicted_outbreak": true
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 471,
+        "record_count": 713.0,
+        "total_contacts": 2852.0,
+        "total_contacts_infected": 2852.0,
+        "avg_duration_sec": 39.43899018232819,
+        "avg_hcir": 100.0,
+        "avg_hh_ar": 100.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.882,
+        "risk_level": "high",
+        "predicted_outbreak": true
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 891,
+        "record_count": 713.0,
+        "total_contacts": 2852.0,
+        "total_contacts_infected": 2852.0,
+        "avg_duration_sec": 39.43899018232819,
+        "avg_hcir": 100.0,
+        "avg_hh_ar": 100.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.882,
+        "risk_level": "high",
+        "predicted_outbreak": true
+      },
+      {
+        "algorithm": "DBSCAN",
+        "cluster_id": 447,
+        "record_count": 687.0,
+        "total_contacts": 2748.0,
+        "total_contacts_infected": 2748.0,
+        "avg_duration_sec": 47.219796215429405,
+        "avg_hcir": 100.0,
+        "avg_hh_ar": 100.0,
+        "n_cells": null,
+        "total_exposure": null,
+        "avg_exposure": null,
+        "risk_score": 0.882,
+        "risk_level": "high",
+        "predicted_outbreak": true
+      }
+    ],
+    "note": "Public excerpt: up to 50 aggregate clusters with at least 20 records. No individual rows or identifiers. Centroid coordinates are unavailable.",
+    "total_analyzed_clusters": 1817
+  },
+  "network-summary": {
+    "nodes": 250,
+    "edges": 848,
+    "density": 0.027244979919678714,
+    "connected_components": 4,
+    "largest_component_size": 130,
+    "node_strategy": "profile_nodes_from_encoded_individual_attributes"
+  },
+  "risk-polygons": {
+    "type": "FeatureCollection",
+    "metadata": {
+      "source": "powerbi/data/ground_zero_clusters.csv",
+      "placeholder_geometry": true,
+      "note": "Generated polygons are deterministic visual zones from cluster outputs because real boundary geometry is not available yet."
+    },
+    "features": [
+      {
+        "type": "Feature",
+        "properties": {
+          "region": "KMeans cluster 0",
+          "risk_level": "low",
+          "risk_score": 0.4,
+          "predicted_outbreak": false,
+          "cluster_id": 0,
+          "source": "powerbi/data/ground_zero_clusters.csv"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                107.32,
+                10.78
+              ],
+              [
+                107.236936,
+                11.09
+              ],
+              [
+                107.01,
+                11.316936
+              ],
+              [
+                106.7,
+                11.4
+              ],
+              [
+                106.39,
+                11.316936
+              ],
+              [
+                106.163064,
+                11.09
+              ],
+              [
+                106.08,
+                10.78
+              ],
+              [
+                106.163064,
+                10.47
+              ],
+              [
+                106.39,
+                10.243064
+              ],
+              [
+                106.7,
+                10.16
+              ],
+              [
+                107.01,
+                10.243064
+              ],
+              [
+                107.236936,
+                10.47
+              ],
+              [
+                107.32,
+                10.78
+              ]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "region": "KMeans cluster 1",
+          "risk_level": "high",
+          "risk_score": 0.833,
+          "predicted_outbreak": true,
+          "cluster_id": 1,
+          "source": "powerbi/data/ground_zero_clusters.csv"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                106.47,
+                21.03
+              ],
+              [
+                106.386936,
+                21.34
+              ],
+              [
+                106.16,
+                21.566936
+              ],
+              [
+                105.85,
+                21.65
+              ],
+              [
+                105.54,
+                21.566936
+              ],
+              [
+                105.313064,
+                21.34
+              ],
+              [
+                105.23,
+                21.03
+              ],
+              [
+                105.313064,
+                20.72
+              ],
+              [
+                105.54,
+                20.493064
+              ],
+              [
+                105.85,
+                20.41
+              ],
+              [
+                106.16,
+                20.493064
+              ],
+              [
+                106.386936,
+                20.72
+              ],
+              [
+                106.47,
+                21.03
+              ]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "region": "KMeans cluster 2",
+          "risk_level": "medium",
+          "risk_score": 0.554,
+          "predicted_outbreak": false,
+          "cluster_id": 2,
+          "source": "powerbi/data/ground_zero_clusters.csv"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                108.84,
+                16.05
+              ],
+              [
+                108.756936,
+                16.36
+              ],
+              [
+                108.53,
+                16.586936
+              ],
+              [
+                108.22,
+                16.67
+              ],
+              [
+                107.91,
+                16.586936
+              ],
+              [
+                107.683064,
+                16.36
+              ],
+              [
+                107.6,
+                16.05
+              ],
+              [
+                107.683064,
+                15.74
+              ],
+              [
+                107.91,
+                15.513064
+              ],
+              [
+                108.22,
+                15.43
+              ],
+              [
+                108.53,
+                15.513064
+              ],
+              [
+                108.756936,
+                15.74
+              ],
+              [
+                108.84,
+                16.05
+              ]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "region": "KMeans cluster 3",
+          "risk_level": "medium",
+          "risk_score": 0.554,
+          "predicted_outbreak": false,
+          "cluster_id": 3,
+          "source": "powerbi/data/ground_zero_clusters.csv"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                106.67,
+                20.85
+              ],
+              [
+                106.586936,
+                21.16
+              ],
+              [
+                106.36,
+                21.386936
+              ],
+              [
+                106.05,
+                21.47
+              ],
+              [
+                105.74,
+                21.386936
+              ],
+              [
+                105.513064,
+                21.16
+              ],
+              [
+                105.43,
+                20.85
+              ],
+              [
+                105.513064,
+                20.54
+              ],
+              [
+                105.74,
+                20.313064
+              ],
+              [
+                106.05,
+                20.23
+              ],
+              [
+                106.36,
+                20.313064
+              ],
+              [
+                106.586936,
+                20.54
+              ],
+              [
+                106.67,
+                20.85
+              ]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "region": "DBSCAN cluster -1",
+          "risk_level": "medium",
+          "risk_score": 0.591,
+          "predicted_outbreak": false,
+          "cluster_id": -1,
+          "source": "powerbi/data/ground_zero_clusters.csv"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                108.2,
+                16.46
+              ],
+              [
+                108.116936,
+                16.77
+              ],
+              [
+                107.89,
+                16.996936
+              ],
+              [
+                107.58,
+                17.08
+              ],
+              [
+                107.27,
+                16.996936
+              ],
+              [
+                107.043064,
+                16.77
+              ],
+              [
+                106.96,
+                16.46
+              ],
+              [
+                107.043064,
+                16.15
+              ],
+              [
+                107.27,
+                15.923064
+              ],
+              [
+                107.58,
+                15.84
+              ],
+              [
+                107.89,
+                15.923064
+              ],
+              [
+                108.116936,
+                16.15
+              ],
+              [
+                108.2,
+                16.46
+              ]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "region": "DBSCAN cluster 0",
+          "risk_level": "medium",
+          "risk_score": 0.47,
+          "predicted_outbreak": false,
+          "cluster_id": 0,
+          "source": "powerbi/data/ground_zero_clusters.csv"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                105.6,
+                11.55
+              ],
+              [
+                105.516936,
+                11.86
+              ],
+              [
+                105.29,
+                12.086936
+              ],
+              [
+                104.98,
+                12.17
+              ],
+              [
+                104.67,
+                12.086936
+              ],
+              [
+                104.443064,
+                11.86
+              ],
+              [
+                104.36,
+                11.55
+              ],
+              [
+                104.443064,
+                11.24
+              ],
+              [
+                104.67,
+                11.013064
+              ],
+              [
+                104.98,
+                10.93
+              ],
+              [
+                105.29,
+                11.013064
+              ],
+              [
+                105.516936,
+                11.24
+              ],
+              [
+                105.6,
+                11.55
+              ]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "region": "DBSCAN cluster 1",
+          "risk_level": "medium",
+          "risk_score": 0.47,
+          "predicted_outbreak": false,
+          "cluster_id": 1,
+          "source": "powerbi/data/ground_zero_clusters.csv"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                106.4,
+                10.04
+              ],
+              [
+                106.316936,
+                10.35
+              ],
+              [
+                106.09,
+                10.576936
+              ],
+              [
+                105.78,
+                10.66
+              ],
+              [
+                105.47,
+                10.576936
+              ],
+              [
+                105.243064,
+                10.35
+              ],
+              [
+                105.16,
+                10.04
+              ],
+              [
+                105.243064,
+                9.73
+              ],
+              [
+                105.47,
+                9.503064
+              ],
+              [
+                105.78,
+                9.42
+              ],
+              [
+                106.09,
+                9.503064
+              ],
+              [
+                106.316936,
+                9.73
+              ],
+              [
+                106.4,
+                10.04
+              ]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "region": "DBSCAN cluster 2",
+          "risk_level": "medium",
+          "risk_score": 0.47,
+          "predicted_outbreak": false,
+          "cluster_id": 2,
+          "source": "powerbi/data/ground_zero_clusters.csv"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                109.81,
+                12.24
+              ],
+              [
+                109.726936,
+                12.55
+              ],
+              [
+                109.5,
+                12.776936
+              ],
+              [
+                109.19,
+                12.86
+              ],
+              [
+                108.88,
+                12.776936
+              ],
+              [
+                108.653064,
+                12.55
+              ],
+              [
+                108.57,
+                12.24
+              ],
+              [
+                108.653064,
+                11.93
+              ],
+              [
+                108.88,
+                11.703064
+              ],
+              [
+                109.19,
+                11.62
+              ],
+              [
+                109.5,
+                11.703064
+              ],
+              [
+                109.726936,
+                11.93
+              ],
+              [
+                109.81,
+                12.24
+              ]
+            ]
+          ]
+        }
+      }
+    ]
+  }
+}

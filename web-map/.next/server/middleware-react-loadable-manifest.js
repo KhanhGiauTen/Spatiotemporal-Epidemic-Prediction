@@ -1,1 +1,0 @@
-self.__REACT_LOADABLE_MANIFEST="{\"app\\\\risk-map\\\\page.tsx -> ../components/risk-map-view\":{\"id\":\"app\\\\risk-map\\\\page.tsx -> ../components/risk-map-view\",\"files\":[\"static/chunks/_app-pages-browser_app_components_risk-map-view_tsx.js\"]}}"

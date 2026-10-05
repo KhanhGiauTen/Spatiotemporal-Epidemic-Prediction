@@ -5,6 +5,8 @@ không gian - thời gian dựa trên dữ liệu mạng lưới tiếp xúc SAS
 xây dựng một pipeline đầy đủ từ dữ liệu thô đến Data Warehouse, Iceberg Cube,
 khai phá dữ liệu, Power BI dashboard và Web Application demo.
 
+**Web demo cho nhà tuyển dụng:** [Epidemic Analytics](https://epidemic-khanh-demo.vercel.app). Bản công khai dùng snapshot tổng hợp, bản đồ minh họa và sandbox chấm điểm đơn giản; không phải dự báo dịch thực tế hay tư vấn y tế. [Phạm vi và triển khai](docs/public-demo.md).
+
 Tên đề tài:
 
 ```text

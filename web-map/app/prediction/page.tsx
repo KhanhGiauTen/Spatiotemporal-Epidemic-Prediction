@@ -46,8 +46,8 @@ export default function PredictionPage() {
   return (
     <main className="page">
       <header className="topbar">
-        <h1>Outbreak Prediction Demo</h1>
-        <p>Submit exposure factors to a deterministic demo scoring endpoint.</p>
+        <h1>Exposure Scoring Sandbox</h1>
+        <p>Illustrative weighted score, not a trained model or a clinical prediction.</p>
       </header>
       <section className="content twoColumn">
         <form className="panel form" onSubmit={submit}>
@@ -64,7 +64,7 @@ export default function PredictionPage() {
               />
             </label>
           ))}
-          <button type="submit">Run Prediction</button>
+          <button type="submit">Calculate Score</button>
         </form>
         <section className="panel">
           <h2>Result</h2>
@@ -73,7 +73,7 @@ export default function PredictionPage() {
             <div className="result">
               <p>Predicted outbreak: {result.predicted_outbreak ? "Yes" : "No"}</p>
               <p>Risk level: {result.risk_level}</p>
-              <p>Probability: {formatValue(result.probability)}</p>
+              <p>Illustrative score: {formatValue(result.probability)}</p>
               <p>{result.explanation}</p>
             </div>
           ) : (

@@ -30,12 +30,12 @@ export default function RiskMapPage() {
     <main className="page">
       <header className="topbar">
         <h1>Interactive Risk Map</h1>
-        <p>Red polygons show deterministic outbreak warning zones returned as GeoJSON.</p>
+        <p>Illustrative geometry for coursework cluster outputs. These shapes are not real geographic outbreak boundaries.</p>
       </header>
       <section className="mapWrap">
         <div className="legend">
           <span className="legendSwatch" />
-          red = high risk outbreak zone
+          illustrative cluster zones
         </div>
         {error ? <div className="status">Unable to load risk polygons: {error}</div> : null}
         {!error && !data ? <div className="status">Loading risk polygons...</div> : null}

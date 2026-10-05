@@ -39,6 +39,9 @@ export default function NetworkPage() {
               </article>
             ))}
           </div>
+          <h2>Individual-level data</h2>
+          <p className="muted">Individual records and node identifiers are excluded from the public demo.</p>
+          {nodes.length > 0 ? <>
           <h2>Top Risk Nodes</h2>
           <div className="tableWrap">
             <table>
@@ -52,6 +55,7 @@ export default function NetworkPage() {
               </tbody>
             </table>
           </div>
+          </> : null}
         </section>
       ) : !error ? (
         <div className="status">Loading network data...</div>

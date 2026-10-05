@@ -19,13 +19,15 @@ export default function AboutPage() {
         <h2>Application</h2>
         <p>
           The frontend is a Next.js application. Leaflet renders the interactive map, while the dashboard, prediction,
-          cluster, and network pages fetch JSON data from the FastAPI backend.
+          cluster, and network pages use same-origin Next.js endpoints backed by aggregate snapshots exported through
+          the original FastAPI analysis code. The complete ETL and model pipeline runs locally, not on this host.
         </p>
         <h2>Limitations</h2>
         <p>
-          Real polygon boundaries are not available yet. The red outbreak areas are deterministic generated visual zones
+          Real polygon boundaries are not available yet. The red areas are deterministic generated visual zones
           from cluster outputs, not administrative or surveyed geographic boundaries.
         </p>
+        <p>Only up to 50 clusters with at least 20 records are included in the public cluster excerpt. Individual-level data is excluded. The scoring sandbox uses a simple illustrative rule, not a trained model or clinical advice.</p>
       </section>
     </main>
   );

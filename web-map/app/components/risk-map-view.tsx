@@ -52,13 +52,13 @@ export default function RiskMapView({ data }: { data: RiskGeoJson }) {
         style={polygonStyle}
         onEachFeature={(feature, layer) => {
           const properties = feature.properties as RiskProperties;
-          layer.bindPopup(
-            `<div class="popupTitle">${properties.region}</div>` +
-              `<div class="popupRow">Risk level: ${properties.risk_level}</div>` +
-              `<div class="popupRow">Risk score: ${properties.risk_score}</div>` +
-              `<div class="popupRow">Predicted outbreak: ${properties.predicted_outbreak ? "yes" : "no"}</div>` +
-              `<div class="popupRow">Cluster ID: ${properties.cluster_id}</div>`
-          );
+          const popup = document.createElement("div");
+          for (const text of [properties.region, `Demo level: ${properties.risk_level}`, `Illustrative score: ${properties.risk_score}`, `Cluster ID: ${properties.cluster_id}`, "Not a real outbreak location"]) {
+            const row = document.createElement("div");
+            row.textContent = text;
+            popup.appendChild(row);
+          }
+          layer.bindPopup(popup);
           layer.on("mouseover", (event: LeafletMouseEvent) => {
             event.target.setStyle({ fillOpacity: 0.65, weight: 3 });
           });
